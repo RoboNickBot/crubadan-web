@@ -1,0 +1,141 @@
+
+
+body {
+  margin: 0;
+  background-color: #767676;
+  color: #333333;
+}
+
+div.paper {
+  margin-left: 4em;
+  width: 50em;
+  background-color: #C2D1FF;
+  padding: 0em;
+}
+
+
+div.content {
+  /*margin-top: -1.34em;*/
+  padding-top: 0.1em;
+  padding-bottom: 2em;
+  padding-left: 2em;
+  padding-right: 1em;
+}
+
+div.content h1 {
+  font-size: 1.7em;
+}
+
+div.info {
+  font-size: 0.8em;
+}
+
+ul.navbar {
+  background-color: #1F3D99;
+  color: white;
+  padding-left: 0.4em;
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
+  margin: 0;
+  font-size: 1.0em;
+}
+
+ul.navbar>li {
+  margin-left: 0em;
+  margin-right: 1em;
+  display: inline;
+  font-weight: bold;
+}
+
+ul.navbar>li:first-child {
+  color: #FFFF4D;
+}
+
+div.mainlist {
+  margin-left: 2em;
+  width: 45em;
+}
+
+h3.resource {
+  margin-left: 2em;
+  padding-left: 1em;
+  padding-top: 0.3em;
+  padding-bottom: 0.3em;
+  background-color: #FFFF80;
+  border-radius: 5px;
+  width: 30em;
+}
+
+ul.dbinfolist {
+  list-style-type: none;
+  margin-left: 2em;
+}
+
+/*
+ul.dbinfolist li {
+  position: relative;
+  margin: 0.5em;
+  padding:0.4em;
+  background-color: #FFFFFF;
+  border-radius: 5px;
+  width 45em;
+}
+*/
+
+ul.dbinfolist>li>div {
+  position: relative;
+  margin: 0.5em;
+  padding: 0.4em;
+  background-color: #FFFFFF;
+  border-radius: 5px;
+  width 5em;
+}
+
+ul.linklist {
+  list-style-type: none;
+  margin-left: 2em;
+  margin-top: -0.5em;
+  padding-left: 0em;
+  width: 27em;
+  height: 10.8em;
+  -webkit-column-count: 2;
+  -moz-column-count: 2;
+  column-count: 2;
+}
+
+ul.linklist>li {
+  margin: 0em;
+  margin-bottom: 0.3em;
+  padding: 0.3em;
+  background-color: #F8F8F8;
+  border-radius: 3px;
+}
+
+div.main {
+  position: relative;
+  margin: 0.3em;
+  padding: 0.3em;
+  background-color: #F8F8F8;
+  border-radius: 3px;
+}
+
+div.key {
+  position: absolute;
+  /*right: 27.0em;*/
+  left: 0.5em;
+  color: #1947A3;
+  /*color: #0000FF;*/
+  font-weight: bold;
+  width: 16em;
+}
+
+div.value {
+  position: relative;
+  padding-left: 18em;
+}
+
+div.info h2 {
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-bottom: 0.4em;
+}

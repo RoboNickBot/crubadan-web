@@ -2,56 +2,97 @@
 
   <head> 
     <title>{language_name_english} ({bcp_47_code})</title>
-    <link rel="stylesheet" href="page.css"></link>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="langpage.css"/>
   </head>
 
   <body>
-    <div class="head">
-      <h1>{language_name_english} ({bcp_47_code})</h1>
-    </div>
 
-    <div class="mainlist">
-      <ul class="main">
-        <li class="main">
-          <div class="key">BCP-47 Code</div>
-          <div class="value">{bcp_47_code}</div></li>
-        <li class="main">
-          <div class="key">Language Name (English)</div>
-          <div class="value">{lanuage_name_english}</div></li>
-        <li class="main">
-          <div class="key">Language Name (Native)</div>
-          <div class="value">{language_name_native}</div></li>
-        <li class="main">
-          <div class="key">ISO 639-3 Code</div>
-          <div class="value">{iso_639_3_code}</div></li>
-        <li class="main">
-          <div class="key">Country</div>
-          <div class="value">{country}</div></li>
-        <li class="main">
-          <div class="key">Documents Crawled</div>
-          <div class="value">{documents_crawled}</div></li>
-        <li class="main">
-          <div class="key">Words</div>
-          <div class="value">{words}</div></li>
-        <li class="main">
-          <div class="key">Characters</div>
-          <div class="value">{characters}</div></li>
-        <li class="main">
-          <div class="key">Script</div>
-          <div class="value">{script}</div></li>
-        <li class="main">
-          <div class="key">Parent Languages</div>
-          <div class="value">{parent_languages}</div></li>
-        <li class="main">
-          <div class="key">Child Languages</div>
-          <div class="value">{child_languages}</div></li>
-        <li class="main">
-          <div class="key">Liguistic Classification</div>
-          <div class="value">{linguistic_classification}</div></li>
-        <li class="main">
-          <div class="key">Alternate Language Names</div>
-          <div class="value">{alternate_language_names}</div></li>
-      </ul>
+    <ul class="navbar">
+      <li>An Crúbadán</li>
+      <li>::</li>
+      <li>Languages</li>
+      <li>::</li>
+      <li>Applications</li>
+      <li>::</li>
+      <li>Attributions</li>
+    </ul>
+
+    <div class="paper">
+      <div class="content">
+
+        <div class="head">
+          <h1>{language_name_english} ({bcp_47_code})</h1>
+        </div>
+
+        <h3 class="resource">Resources for {bcp_47_code}: <a href="{zip_link}">{zip_name}</a></h3>
+
+        <div class="info">
+
+          <h2>Database Statistics</h2>
+          <div class="mainlist">
+            <div class="main">
+              <div class="key">Documents Crawled</div>
+              <div class="value">{documents_crawled}</div>
+            </div>
+            <div class="main">
+              <div class="key">Words</div>
+              <div class="value">{words}</div>
+            </div>
+            <div class="main">
+              <div class="key">Characters</div>
+              <div class="value">{characters}</div>
+            </div>
+          </div>
+
+          <h2>Language Attributes</h2>
+          <div class="mainlist">
+            <div class="main">
+              <div class="key">BCP-47 Code</div>
+              <div class="value">{bcp_47_code}</div></div>
+            <div class="main">
+              <div class="key">Language Name (English)</div>
+              <div class="value">{lanuage_name_english}</div></div>
+            <div class="main">
+              <div class="key">Language Name (Native)</div>
+              <div class="value">{language_name_native}</div></div>
+            <div class="main">
+              <div class="key">ISO 639-3 Code</div>
+              <div class="value">{iso_639_3_code}</div></div>
+            <div class="main">
+              <div class="key">Country</div>
+              <div class="value">{country}</div></div>
+            <div class="main">
+              <div class="key">Script</div>
+              <div class="value">{script}</div></div>
+            <div class="main">
+              <div class="key">Parent Languages</div>
+              <div class="value">{parent_languages}</div></div>
+            <div class="main">
+              <div class="key">Child Languages</div>
+              <div class="value">{child_languages}</div></div>
+            <div class="main">
+              <div class="key">Liguistic Classification</div>
+              <div class="value">{linguistic_classification}</div></div>
+            <div class="main">
+              <div class="key">Alternate Language Names</div>
+              <div class="value">{alternate_language_names}</div></div>
+          </div>
+
+          <h2>External Links<h2>
+          <ul class="linklist">
+            <li><a href="{olac_link}">OLAC</a></li>
+            <li><a href="{bible_link}">Bible Translation</a></li>
+            <li><a href="{wikipedia_link}">Wikipedia</a></li>
+            <li><a href="{tweets_link}">Indigenous Tweets</a></li>
+            <li><a href="{blogs_link}">Indigenous Blogs</a></li>
+            <li><a href="{udhr}">UDHR</a></li>
+            <li><a href="{jw_link}">jw.org</a></li>
+          </ul>
+
+        </div>
+
+      </div>
     </div>
 
   </body>
