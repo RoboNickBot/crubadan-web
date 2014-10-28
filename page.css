@@ -1,0 +1,39 @@
+body {
+  background-color: #C2D1FF;
+}
+
+p { 
+  position: static;
+}
+
+/*
+h1 {
+  color: yellow;
+  background-color: #EEEEEE;
+}
+*/
+
+div.mainlist {
+  width: 45em;
+}
+
+li.main {
+  position: relative;
+  margin: 0.5em;
+  padding: 0.4em;
+  background-color: #FFFFFF;
+}
+
+div.key {
+  position: absolute;
+  right: 25em;
+  color: #0000FF;
+  font-weight: bold;
+  width: 16em;
+}
+
+div.value {
+  position: relative;
+  padding-left: 18em;
+}
+
