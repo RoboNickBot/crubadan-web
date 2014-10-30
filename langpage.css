@@ -6,7 +6,7 @@ body {
 
 div.paper {
   margin-left: 4em;
-  width: 50em;
+  width: 37em;
   background-color: #C2D1FF;
   padding: 0em;
 }
@@ -52,13 +52,15 @@ ul.navbar>li:first-child {
 
 div.mainlist {
   margin-left: 2em;
-  width: 45em;
+  width: 37em;
 }
 
 span.resource {
   background-color: #FFFF80;
   border-radius: 5px;
-  padding: 0.3em;
+  padding: 0.0em;
+  padding-left: 0.1em;
+  padding-right: 0.1em;
 }
 
 
