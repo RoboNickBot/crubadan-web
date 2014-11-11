@@ -57,7 +57,7 @@ executable crubadan-web
   other-extensions:    CPP, OverloadedStrings, ForeignFunctionInterface
   
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.7 && <4.8, data-default, text, ghcjs-canvas, ghcjs-jquery, ghcjs-base, reactive-banana
+  build-depends:       base >=4.7 && <4.8, data-default, text, ghcjs-canvas, ghcjs-jquery, ghcjs-base, reactive-banana, HTTP, network-uri
   -- Directories containing source files.
   hs-source-dirs:      src
   

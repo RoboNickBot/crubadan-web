@@ -7,7 +7,8 @@ deploy: package
 	ssh akira "cd /www/crubadan; tar xzf crubadan.tgz; rm crubadan.tgz"
 
 test: build
-	firefox build/languages.html
+	sudo cp build/* /srv/www/
+	firefox http://localhost/
 
 package: build
 	cd build; tar czf ../crubadan.tgz ./*

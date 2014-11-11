@@ -1,6 +1,5 @@
 {-# LANGUAGE CPP, OverloadedStrings, ForeignFunctionInterface #-}
 
-import Crubadan.Search (genResults)
 import Data.Default
 import qualified Data.Text as T (empty, pack, unpack, Text)
 
@@ -11,6 +10,11 @@ import GHCJS.Foreign
 
 import Reactive.Banana
 import Reactive.Banana.Frameworks
+
+import Data.Maybe
+
+import qualified Crubadan.Types as S (Database)
+import qualified Crubadan.Net as N (netget)
 
 main = do
   searchBox <- initSearchBox
@@ -38,7 +42,7 @@ netDesc addSearchEvent results = do
   searches <- fromAddHandler addSearchEvent
   let bSearches = stepper [] searches
   searchChanges <- changes bSearches
-  reactimate' $ fmap (update results . genResults) <$> searchChanges
+  reactimate' $ fmap (update results) <$> searchChanges
 
 wireSearchBox :: JQuery -> IO (AddHandler String)
 wireSearchBox box = do
@@ -53,9 +57,10 @@ getValString box = do
   t <- getVal box
   return $ T.unpack t
 
-update :: JQuery -> [String] -> IO ()
-update i zs =
-  let 
+update :: JQuery -> String -> IO ()
+update i s =
+  let
+    r :: JQuery -> S.Database -> IO ()
     r parent (s:ss) = do
       p <- select "<p>"
       setText (T.pack s) p
@@ -64,5 +69,9 @@ update i zs =
     r _ _ = return ()
   in
     do
+      --print $ "testing......"
+      zs <- N.netget s
+      --print $ "testing..."
+      --print $ show zs
       JavaScript.JQuery.empty i
-      r i zs 
+      r i $ fromJust zs 
