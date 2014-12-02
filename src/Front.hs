@@ -25,14 +25,14 @@ main = do
 
 initSearchBox :: IO JQuery
 initSearchBox = do
-  parent <- select "#searchboxdiv"
-  box <- select "<input id=\"searchbox\" type=\"text\" name=\"search\" />"
+  parent <- select "#searchboxtable"
+  box <- select "<tr><td><input id=\"searchbox\" type=\"text\" name=\"search\" /></td></tr>"
   appendJQuery box parent
   searchbox <- select "#searchbox"
   return searchbox
 
 initResultsBox :: IO JQuery
-initResultsBox = select "#resultsdiv"
+initResultsBox = select "#resultstable"
 
 netDesc :: Frameworks t
         => AddHandler (String)
@@ -60,10 +60,11 @@ getValString box = do
 update :: JQuery -> String -> IO ()
 update i s =
   let
+    ln s = "<td><a href=\"http://octalsrc.net/db/" ++ s ++ "\">" ++ s ++ "</a></td>"
     r :: JQuery -> S.Database -> IO ()
     r parent (s:ss) = do
-      p <- select "<p>"
-      setText (T.pack s) p
+      p <- select $ T.pack ("<tr>" ++ (ln s) ++ "<\tr>")
+      --setText (T.pack (ln s)) p
       appendJQuery p parent
       r parent ss
     r _ _ = return ()
