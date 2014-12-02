@@ -1,27 +1,38 @@
 # Won't be useful if you aren't Nick...
 
-main: test
 
-deploy: package
-	scp crubadan.tgz akira:/www/crubadan/
-	ssh akira "cd /www/crubadan; tar xzf crubadan.tgz; rm crubadan.tgz"
+akira: package
+	scp crubadan.tgz akira:
+	ssh akira "tar xzf crubadan.tgz; rm crubadan.tgz; cp www/* /www/crubadan/; rm -r www"
 
-test: build
-	sudo cp build/* /srv/www/
-	firefox http://localhost/
+local: build
+	cp www/* /srv/www/crubadan/
 
 package: build
-	cd build; tar czf ../crubadan.tgz ./*
+	tar czf crubadan-web.tgz www
 
-	
-build:
-	mkdir build
-	cabal configure --ghcjs
-	cabal build
-	cp dist/build/crubadan-web/crubadan-web.jsexe/*.js build/
-	cp static/* build/
+build: frontend backend
+	cp static/* www/
+
+frontend: www_dir sandbox
+	cabal install --ghcjs ./front-end
+
+backend: www_dir sandbox
+	cabal install ./back-end
+
+shared: sandbox
+	cabal install ./shared
+	rm -r ./shared/dist
+
+shared_js: sandbox
+	cabal install --ghcjs ./shared
+	rm -r ./shared/dist
+
+www_dir: clean
+	mkdir www
+
+sandbox: clean
+	cabal sandbox init
 
 clean:
-	rm -r build
-	rm -r dist
-	rm crubadan.tgz
+	rm -r www; rm crubadan.tgz; exit 0;
