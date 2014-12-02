@@ -8,7 +8,7 @@ import qualified Data.Text as T (pack, unpack, Text)
 
 import qualified Crubadan.Types as CR (Database)
 
-url = T.pack "http://localhost/cgi/"
+url = T.pack "http://octalsrc.net/cgi/"
 
 query q = [(T.pack "query", T.pack (show q))]
 
