@@ -1,19 +1,14 @@
-module Crubadan.Search ( Query, Result, Database, database, genResults ) where
-                        
+module Crubadan.Search ( genResults ) where
+
 import Text.Regex( Regex, mkRegex, matchRegex )
 import Data.Maybe( isJust )
 import System.Directory (getDirectoryContents)
 import qualified Data.List as L
 
-import Crubadan.Types
+import qualified Crubadan.Types as T
 
-
-database :: String -> IO Database
---database = ["abc","eng","aak","arc","src","nsa","usa","cat","sci","slu","edu"]
-database path = fmap (L.delete "." . L.delete "..") (getDirectoryContents path)
-
-genResults :: Query -> Database -> Result
-genResults query = filter $ matches (mkRegex query)
+genResults :: T.Query -> T.Database -> T.Result
+genResults query = undefined --filter $ matches (mkRegex query)
 
 matches :: Regex -> String -> Bool
 matches r = isJust . matchRegex r

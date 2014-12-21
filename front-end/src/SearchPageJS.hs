@@ -1,7 +1,7 @@
 {-# LANGUAGE CPP, OverloadedStrings, ForeignFunctionInterface #-}
 
 import Data.Default
-import qualified Data.Text as T (empty, pack, unpack, Text)
+import qualified Data.Text as T
 
 import JavaScript.JQuery hiding (Event)
 
@@ -10,8 +10,8 @@ import Reactive.Banana.Frameworks
 
 import Data.Maybe
 
-import qualified Crubadan.Types as S (Database)
-import qualified Crubadan.Net as N (netget)
+import qualified Crubadan.Types as S
+import qualified Crubadan.Net as N
 
 main = do
   searchBox <- initSearchBox
