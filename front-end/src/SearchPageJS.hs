@@ -3,10 +3,7 @@
 import Data.Default
 import qualified Data.Text as T (empty, pack, unpack, Text)
 
-import JavaScript.Canvas
 import JavaScript.JQuery hiding (Event)
-import GHCJS.Types
-import GHCJS.Foreign
 
 import Reactive.Banana
 import Reactive.Banana.Frameworks

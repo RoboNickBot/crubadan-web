@@ -1,24 +1,32 @@
 # Won't be useful if you aren't Nick...
 
+DISTNAME= crubadan-web
+DISTFILE= $(DISTNAME).tgz
+WEBDIR= www
+
+all: local
 
 akira: package
-	scp crubadan.tgz akira:
-	ssh akira "tar xzf crubadan.tgz; rm crubadan.tgz; cp www/* /www/crubadan/; rm -r www"
+	scp $(DISTFILE) akira:
+	ssh akira "tar xzf $(DISTFILE); rm $(DISTFILE); cp $(WEBDIR)/* /srv/www/crubadan/; rm -r $(WEBDIR)"
 
 local: build
-	cp www/* /srv/www/crubadan/
+	cp $(WEBDIR)/* /srv/www/crubadan/
 
 package: build
-	tar czf crubadan-web.tgz www
+	tar czf $(DISTFILE) $(WEBDIR)
 
 build: frontend backend
-	cp static/* www/
+	cp static/* $(WEBDIR)/
 
-frontend: www_dir sandbox
+frontend: www_dir sandbox shared_js
+	cabal install --ghcjs ../ghcjs-zone/GHCJS-JQuery
 	cabal install --ghcjs ./front-end
+	rm -r ./front-end/dist
 
-backend: www_dir sandbox
+backend: www_dir sandbox shared
 	cabal install ./back-end
+	rm -r ./back-end/dist
 
 shared: sandbox
 	cabal install ./shared
@@ -29,10 +37,10 @@ shared_js: sandbox
 	rm -r ./shared/dist
 
 www_dir: clean
-	mkdir www
+	mkdir $(WEBDIR)
 
 sandbox: clean
 	cabal sandbox init
 
 clean:
-	rm -r www; rm crubadan.tgz; exit 0;
+	rm -r $(WEBDIR); rm $(DISTFILE); rm -r .cabal-sandbox; rm cabal.sandbox.config; exit 0;

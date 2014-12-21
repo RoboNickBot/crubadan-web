@@ -15,8 +15,8 @@ executable crubadan-web
   main-is:             SearchPageJS.hs
   other-modules:       Crubadan.Net
   other-extensions:    CPP, OverloadedStrings, ForeignFunctionInterface
-  build-depends:       base >=4.7 && <4.8, data-default, text, ghcjs-canvas, ghcjs-jquery,
-                       ghcjs-base, reactive-banana, HTTP, network-uri,
+  build-depends:       base >=4.7 && <4.8, data-default, text, ghcjs-jquery,
+                       ghcjs-base, reactive-banana,
                        crubadan-web-shared >=0.1 && <0.2
   hs-source-dirs:      src
   default-language:    Haskell2010
