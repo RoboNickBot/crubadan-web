@@ -2,11 +2,11 @@ module Crubadan.Types ( Query
                       , Result
                       , Database
                       , WS (..)
-                      , Attribute (..)) where
+                      , Attribute (..) ) where
 
 import qualified Data.Map as M
 
-type Query = String
+type Query = [(String, String)]
 type Result = [WS]
 
 type Database = [WS]
