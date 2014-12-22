@@ -13,7 +13,10 @@ readDatabase :: String -> IO C.Database
 readDatabase = fmap processEntries . entries
 
 entries :: String -> IO [String]
-entries path = getNames path >>= foldr entryAppend (return [])
+--entries path = getNames path >>= foldr entryAppend (return [])
+entries path = do names <- getNames path
+                  print names
+                  foldr entryAppend (return []) names
 
 getNames :: String -> IO [String]
 getNames path = ( fmap (fmap (qualifyName path))
@@ -27,6 +30,7 @@ qualifyName path name = path ++ "/" ++ name ++ "/" ++ recordFilename
 entryAppend :: String -> IO [String] -> IO [String]
 entryAppend name ss = 
   do content <- readFile name
+     putStrLn content
      others <- ss
      return (content : others)
 
@@ -39,7 +43,7 @@ processEntries = foldr p []
 wsFile :: P.GenParser Char st C.WS
 wsFile = do name <- wsName
             P.char '\n'
-            rs <- wsRecords
+            rs <- wsRecords 
             return (C.WS name (M.fromList rs))
 
 wsName = P.string "lang " >> P.many (P.noneOf "\n")
@@ -53,4 +57,4 @@ wsRecord = do key <- P.many (P.noneOf " ")
               val <- P.many (P.noneOf "\n")
               return ( key, C.Attribute val val )
 
-moreRecords = (P.char '\n' >> wsRecords) P.<|> (return [])
+moreRecords = P.char '\n' >> ((P.eof >> return []) P.<|> wsRecords)

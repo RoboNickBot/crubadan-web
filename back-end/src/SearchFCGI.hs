@@ -3,10 +3,10 @@ import Network.FastCGI( runFastCGI )
 import Control.Applicative
 
 import qualified Crubadan.Search as S
-import qualified Crubadan.Types as T
+import qualified Crubadan.Types as C
 import qualified Crubadan.FileIO as F
 
-cgiMain :: T.Database -> CGI CGIResult
+cgiMain :: C.Database -> CGI CGIResult
 cgiMain d = do setHeader "Content-type" "text/plain"
                query <- readInput "query"
                output $ show $ fmap (take 20) $ S.genResults <$> query <*> (pure d)
