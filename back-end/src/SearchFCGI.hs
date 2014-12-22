@@ -12,6 +12,6 @@ cgiMain d = do setHeader "Content-type" "text/plain"
                output $ show $ fmap (take 20) $ S.genResults <$> query <*> (pure d)
 
 main :: IO ()
-main = do d <- F.readDatabase "./db"
+main = do d <- F.readDatabase "./crubadan-key-values"
           runFastCGI $ cgiMain d
           --(print . show . S.genResults "a") d

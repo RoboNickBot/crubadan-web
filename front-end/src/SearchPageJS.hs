@@ -10,7 +10,7 @@ import Reactive.Banana.Frameworks
 
 import Data.Maybe
 
-import qualified Crubadan.Types as S
+import qualified Crubadan.Types as C
 import qualified Crubadan.Net as N
 
 main = do
@@ -57,10 +57,10 @@ getValString box = do
 update :: JQuery -> String -> IO ()
 update i s =
   let
-    ln s = "<td><a href=\"http://octalsrc.net/db/" ++ s ++ "\">" ++ s ++ "</a></td>"
-    r :: JQuery -> S.Database -> IO ()
+    ln name uid = "<td><a href=\"http://octalsrc.net/db/" ++ uid ++ "\">" ++ name ++ "</a></td>"
+    r :: JQuery -> C.Result -> IO ()
     r parent (s:ss) = do
-      p <- select $ T.pack ("<tr>" ++ (ln s) ++ "<\tr>")
+      p <- select $ T.pack ("<tr>" ++ (ln (engName s) (wsUID s)) ++ "<\tr>")
       --setText (T.pack (ln s)) p
       appendJQuery p parent
       r parent ss
@@ -68,7 +68,7 @@ update i s =
   in
     do
       --print $ "testing......"
-      zs <- N.netget s
+      zs <- N.netget [("name_english",s)]
       --print $ "testing..."
       --print $ show zs
       JavaScript.JQuery.empty i
