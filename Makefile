@@ -1,30 +1,35 @@
 # Won't be useful if you aren't Nick...
 
 DISTNAME= crubadan-web
+BACKENDNAME= crubadan-web-back
 DISTFILE= $(DISTNAME).tgz
+INSTALLPATH= /srv/www/crubadan/
 WEBDIR= www
+BINDIR= bin
 
 all: local
 
 akira: package
 	scp $(DISTFILE) akira:
-	ssh akira "tar xzf $(DISTFILE); rm $(DISTFILE); cp $(WEBDIR)/* /srv/www/crubadan/; rm -r $(WEBDIR)"
+	ssh akira "tar xzf $(DISTFILE); rm $(DISTFILE); cp $(WEBDIR)/* $(INSTALLPATH); rm -r $(WEBDIR); cp $(BINDIR)/* ./; rm -r $(BINDIR)"
 
 local: build
-	cp $(WEBDIR)/* /srv/www/crubadan/
+	cp $(WEBDIR)/* $(INSTALLPATH)
 
 package: build
-	tar czf $(DISTFILE) $(WEBDIR)
+	tar czf $(DISTFILE) $(WEBDIR) $(BINDIR)/
 
-build: frontend backend
+build: frontend backend web_dir bin_dir
 	cp static/* $(WEBDIR)/
+	cp .cabal-sandbox/bin/$(DISTNAME).jsexe/all.js $(WEBDIR)/
+	cp .cabal-sandbox/bin/$(BACKENDNAME) $(BINDIR)/
 
-frontend: www_dir sandbox shared_js
+frontend: sandbox shared_js
 	cabal install --ghcjs ../ghcjs-zone/GHCJS-JQuery
 	cabal install --ghcjs ./front-end
 	rm -r ./front-end/dist
 
-backend: www_dir sandbox shared
+backend: sandbox shared
 	cabal install ./back-end
 	rm -r ./back-end/dist
 
@@ -36,11 +41,14 @@ shared_js: sandbox
 	cabal install --ghcjs ./shared
 	rm -r ./shared/dist
 
-www_dir: clean
+web_dir: clean
 	mkdir $(WEBDIR)
+
+bin_dir: clean
+	mkdir $(BINDIR)
 
 sandbox: clean
 	cabal sandbox init
 
 clean:
-	rm -r $(WEBDIR); rm $(DISTFILE); rm -r .cabal-sandbox; rm cabal.sandbox.config; exit 0;
+	rm -r $(WEBDIR); rm -r $(BINDIR); rm $(DISTFILE); rm -r .cabal-sandbox; rm cabal.sandbox.config; exit 0;

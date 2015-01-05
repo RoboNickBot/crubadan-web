@@ -10,7 +10,7 @@ import Reactive.Banana.Frameworks
 
 import Data.Maybe
 
-import qualified Crubadan.Types as C
+import qualified Crubadan.Shared.Types as CS
 import qualified Crubadan.Net as N
 
 main = do
@@ -58,9 +58,9 @@ update :: JQuery -> String -> IO ()
 update i s =
   let
     ln name uid = "<td><a href=\"http://octalsrc.net/db/" ++ uid ++ "\">" ++ name ++ "</a></td>"
-    r :: JQuery -> C.Result -> IO ()
+    r :: JQuery -> CS.Result -> IO ()
     r parent (s:ss) = do
-      p <- select $ T.pack ("<tr>" ++ (ln (engName s) (wsUID s)) ++ "<\tr>")
+      p <- select $ T.pack ("<tr>" ++ (ln (head . snd $ s) (fst s)) ++ "<\tr>")
       --setText (T.pack (ln s)) p
       appendJQuery p parent
       r parent ss

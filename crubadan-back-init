@@ -1,0 +1,6 @@
+#!/bin/sh
+
+PORT="8992"
+EXEC=$1
+
+spawn-fcgi -a 127.0.0.1 -p $PORT -f $EXEC

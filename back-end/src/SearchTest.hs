@@ -3,6 +3,7 @@ import Options.Applicative
 import Crubadan.Search (genResults)
 import Crubadan.FileIO (readDatabase)
 import qualified Crubadan.Types as C
+import qualified Crubadan.Shared.Types as CS
 
 data Ops = Ops { dbpath :: String
                , queryStr :: String }
