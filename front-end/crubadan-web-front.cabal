@@ -12,8 +12,9 @@ build-type:          Simple
 cabal-version:       >=1.10
 
 executable crubadan-web
-  main-is:             SearchPageJS.hs
-  other-modules:       Crubadan.Net
+  main-is:             SearchPage.hs
+  other-modules:       Crubadan.Front.Types,
+                       Crubadan.Front.JS
   other-extensions:    CPP, OverloadedStrings, ForeignFunctionInterface
   build-depends:       base >=4.7 && <4.8, data-default, text, ghcjs-jquery,
                        ghcjs-base, reactive-banana,
