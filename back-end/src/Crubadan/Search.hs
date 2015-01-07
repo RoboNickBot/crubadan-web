@@ -7,7 +7,7 @@ import qualified Data.Map as M
 import qualified Crubadan.Types as C
 import qualified Crubadan.Shared.Types as CS
 
-genResults :: CS.Query -> C.Database -> CS.Result
+genResults :: CS.Query -> C.Database -> [CS.Result]
 genResults q = let trans (key,val) = ( key, (mayRegex val) )
                in crunch q . filter (matches (fmap trans q)) 
 
@@ -22,7 +22,7 @@ matchAttr ws (s, Nothing) = Just ["pass"]
 matchAttr ws (s,(Just r)) = 
   M.lookup s (C.wsData ws) >>= matchRegex r . C.wsaMatch
 
-crunch :: CS.Query -> [C.WS] -> CS.Result
+crunch :: CS.Query -> [C.WS] -> [CS.Result]
 crunch q = foldr (\w -> (:) (C.wsUID w, pullVals q w)) []
 
 pullVals :: CS.Query -> C.WS -> [Maybe String]

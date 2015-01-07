@@ -13,6 +13,8 @@ import Control.Event.Handler (Handler)
 import Crubadan.Front.Types
 import Crubadan.Shared.Types
 
+resultRowClass = "resultrow" :: String
+sResultRows = select (pack ("." ++ resultRowClass))
 sSearchTable = select "#searchboxtable"
 sResultTable = select "#resultstable"
 
@@ -69,5 +71,29 @@ quappend f ioq = do q <- ioq
 readField :: Field -> IO String
 readField f = sSearchBox f >>= fmap unpack . getVal
 
-writeResults :: [Field] -> Result -> IO ()
-writeResults _ rs = print rs
+writeResults :: [Field] -> Maybe [Result] -> IO ()
+writeResults fs (Just rs) = do clearTable
+                               table <- sSearchTable
+                               foldr (rowsert table fs) (return ()) rs 
+writeResults _ _ = putStrLn "Connection or Database Error!"
+
+clearTable :: IO ()
+clearTable = sResultRows >>= remove >> return ()
+
+rowsert :: JQuery -> [Field] -> Result -> IO () -> IO ()
+rowsert table fs r io = 
+  io >> do row <- select (pack ("<tr class=\"" 
+                                ++ resultRowClass
+                                ++ "\"></tr>"))
+           appendJQuery row table
+           foldr (colsert row r) 
+                 (return ()) 
+                 (reverse (zip fs (resultData r)))
+           return ()
+
+colsert :: JQuery -> Result -> (Field, Maybe String) -> IO () -> IO ()
+colsert row r (f, d) io = 
+  io >> do let disp = fieldDisplay f
+           td <- select (pack ("<td>" ++ disp r d ++ "</td>"))
+           appendJQuery td row
+           return ()
