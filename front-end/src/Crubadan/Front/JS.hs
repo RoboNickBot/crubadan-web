@@ -1,13 +1,13 @@
 {-# LANGUAGE CPP, OverloadedStrings, ForeignFunctionInterface #-}
 
 module Crubadan.Front.JS ( initSearchTable
-                         , wireSearchTable
+                         , attachHandler
                          , readSearchTable
                          , writeResults ) where
 
 import JavaScript.JQuery
--- import Data.Default
-import Data.Text (pack)
+import Data.Default (def)
+import Data.Text (pack, unpack)
 import Control.Event.Handler (Handler)
 
 import Crubadan.Front.Types
@@ -16,7 +16,7 @@ import Crubadan.Shared.Types
 sSearchTable = select "#searchboxtable"
 sResultTable = select "#resultstable"
 
-sSearchBox name = select (pack ("#sb" ++ name)) 
+sSearchBox field = select (pack ("#sb" ++ (fieldKey field))) 
 
 initSearchTable :: [Field] -> IO ()
 initSearchTable fs = do let rfs = reverse fs
@@ -37,20 +37,37 @@ tablesert fun field iojq = do child <- fun field
                               appendJQuery child parent
 
 nr :: Field -> IO JQuery
-nr (s,_) = select (pack ("<td>" ++ s ++ "</td>"))
+nr f = select (pack ("<td>" ++ fieldTitle f ++ "</td>"))
 
 sr :: Field -> IO JQuery
-sr (s,r) = select (pack ("<td><input id=\"sb" 
-                         ++ r 
-                         ++ "\" type=\"text\" name=\""
-                         ++ s
-                         ++ "\" /></td>"))
+sr f = select (pack ("<td><input id=\"sb" 
+                     ++ (fieldKey f)
+                     ++ "\" type=\"text\" name=\""
+                     ++ (fieldTitle f)
+                     ++ "\" /></td>"))
 
-wireSearchTable :: [Field] -> Handler a -> IO ()
-wireSearchTable = undefined
+attachHandler :: [Field] -> Handler Query -> IO ()
+attachHandler fields fire = foldr (watchBox fire fields) 
+                                  (return ()) 
+                                  fields
+
+watchBox :: Handler Query -> [Field] -> Field -> IO () -> IO ()
+watchBox fire fs field io = 
+  io >> do let handler _ = fire =<< readSearchTable fs
+           box <- sSearchBox field
+           keyup handler def box
+           return ()
 
 readSearchTable :: [Field] -> IO Query
-readSearchTable = undefined
+readSearchTable = foldr quappend (return [])
+
+quappend :: Field -> IO Query -> IO Query
+quappend f ioq = do q <- ioq
+                    val <- readField f
+                    return ((fieldKey f, val) : q)
+
+readField :: Field -> IO String
+readField f = sSearchBox f >>= fmap unpack . getVal
 
 writeResults :: [Field] -> Result -> IO ()
-writeResults = undefined
+writeResults _ rs = print rs
