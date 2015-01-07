@@ -11,7 +11,7 @@ import Reactive.Banana.Frameworks
 import Data.Maybe
 
 import qualified Crubadan.Shared.Types as CS
-import qualified Crubadan.Net as N
+import qualified Crubadan.Front.Net as N
 
 main = do
   searchBox <- initSearchBox
