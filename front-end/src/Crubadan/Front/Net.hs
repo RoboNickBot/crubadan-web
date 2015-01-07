@@ -1,4 +1,4 @@
-module Crubadan.Net ( netget ) where
+module Crubadan.Front.Net ( netget ) where
 
 import Data.Maybe (fromJust)
 import Data.Default (def)
