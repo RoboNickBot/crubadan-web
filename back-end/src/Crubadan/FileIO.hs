@@ -41,10 +41,12 @@ processEntries = foldr p []
                    Right w -> w : ss
 
 wsFile :: P.GenParser Char st C.WS
-wsFile = do name <- wsName
-            P.char '\n'
-            rs <- wsRecords 
-            return (C.WS name (M.fromList rs))
+wsFile = 
+  do name <- wsName
+     P.char '\n'
+     rs <- wsRecords 
+     return (C.WS name 
+                  (M.fromList (("lang", C.Attribute name name) : rs)))
 
 wsName = P.string "lang " >> P.many (P.noneOf "\n")
 
