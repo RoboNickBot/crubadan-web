@@ -53,6 +53,12 @@ main = do domain <- cgiDomain
           (addHandler, fire) <- newAddHandler
           attachHandler fields fire
           network <- compile (mkNetwork domain addHandler)
+          
+          -- Fill the table from empty query when page first loads
+          initQuery <- readSearchTable fields
+          upd8 domain initQuery
+          
+          -- then start listening for key-ups to update
           actuate network
 
 mkNetwork domain handler = 
