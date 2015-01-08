@@ -1,4 +1,9 @@
-module Crubadan.Front.Net ( netget ) where
+{-# LANGUAGE CPP, ForeignFunctionInterface, JavaScriptFFI #-}
+
+module Crubadan.Front.Net ( netget, cgiDomain ) where
+
+import GHCJS.Foreign (FromJSString (..))
+import GHCJS.Types (JSString)
 
 import Data.Maybe (fromJust)
 import Data.Default (def)
@@ -16,3 +21,9 @@ netget :: String -> CS.Query -> IO (Maybe [CS.Result])
 netget url r = 
   do ar <- ajax (T.pack url) (query r) def
      return . fmap (fromJust . read . T.unpack) . arData $ ar
+
+cgiDomain :: IO String
+cgiDomain = fmap fromJSString ffiGetHostname
+
+foreign import javascript safe "$r = window.location.hostname;"
+   ffiGetHostname :: IO JSString

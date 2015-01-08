@@ -15,11 +15,9 @@ import Crubadan.Shared.Types
             to be displayed for the user in the
             search table
    -}
-domain :: String
-domain = "http://localhost"
 
-cgiURL = domain ++ "/cgi/" -- extension for cgi queries
-wsURL = domain ++ "/ws/" -- extension for links to landing-pages
+cgiURL url = url ++ "/cgi/" -- extension for cgi queries
+wsURL url = url ++ "/ws/" -- extension for links to landing-pages
 
 {- Fields are a three-tuple of
      
@@ -31,31 +29,38 @@ wsURL = domain ++ "/ws/" -- extension for links to landing-pages
                (plain unless the value needs to be a
                 click-able link in the table or something)
    -}
-fields :: [Field]
-fields = 
-  [ ( "Name (English)", "name_english", (withLink wsURL ".html") )
+mkFields :: String -> [Field]
+mkFields domain = 
+  
+  [ ( "Name (English)", "name_english", (withLink (wsURL u) ".html") )
   , ( "ISO Code", "lang", plain ) 
   , ( "Country", "country", plain ) ]
+  
+  where u = reqURL domain
 
 
 {- ** END OF FRONT-END CONFIGURATION ** -}
 
+reqURL domain = "http://" ++ domain
 
-main = do initSearchTable fields
+main = do domain <- cgiDomain
+          putStrLn domain
+          let fields = mkFields domain 
+          initSearchTable fields
           (addHandler, fire) <- newAddHandler
           attachHandler fields fire
-          network <- compile (mkNetwork addHandler)
+          network <- compile (mkNetwork domain addHandler)
           actuate network
 
-mkNetwork handler = 
+mkNetwork domain handler = 
   do eQueries <- fromAddHandler handler 
-     reactimate (fmap upd8 eQueries)
+     reactimate (fmap (upd8 domain) eQueries)
 
-upd8 :: Query -> IO ()
-upd8 q = handleQ q >>= showResults
+upd8 :: String -> Query -> IO ()
+upd8 domain q = handleQ domain q >>= showResults (mkFields domain)
 
-handleQ :: Query -> IO (Maybe [Result])
-handleQ q = print q >> netget cgiURL q
+handleQ :: String -> Query -> IO (Maybe [Result])
+handleQ domain q = print q >> netget (cgiURL (reqURL domain)) q
 
-showResults :: Maybe [Result] -> IO ()
-showResults rs = print rs >> writeResults fields rs
+showResults :: [Field] -> Maybe [Result] -> IO ()
+showResults fields rs = print rs >> writeResults fields rs

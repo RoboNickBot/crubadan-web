@@ -14,7 +14,8 @@ cabal-version:       >=1.10
 executable crubadan-web
   main-is:             SearchPage.hs
   other-modules:       Crubadan.Front.Types,
-                       Crubadan.Front.JS
+                       Crubadan.Front.JS,
+                       Crubadan.Front.Net
   other-extensions:    CPP, OverloadedStrings, ForeignFunctionInterface
   build-depends:       base >=4.7 && <4.8, data-default, text, ghcjs-jquery,
                        ghcjs-base, reactive-banana,
