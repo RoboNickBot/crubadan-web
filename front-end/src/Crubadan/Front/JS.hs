@@ -13,24 +13,35 @@ import Control.Event.Handler (Handler)
 import Crubadan.Front.Types
 import Crubadan.Shared.Types
 
+searchConID = "searchcontrols" :: String
+searchTableID = "searchtable" :: String
 resultRowClass = "resultrow" :: String
+
 sResultRows = select (pack ("." ++ resultRowClass))
-sSearchTable = select "#searchboxtable"
-sResultTable = select "#resultstable"
+sSearchTable = select (pack ("#" ++ searchTableID))
+
+sSearchTable' = select (pack ("<table id=\"" 
+                              ++ searchTableID
+                              ++ "\"></table>"))
+
+sSearchConDiv = select (pack ("#" ++ searchConID ++ "div"))
+sSearchTableDiv = select (pack ("#" ++ searchTableID ++ "div"))
 
 sSearchBox field = select (pack ("#sb" ++ (fieldKey field))) 
 
 initSearchTable :: [Field] -> IO ()
-initSearchTable fs = do let rfs = reverse fs
+initSearchTable fs = do table <- sSearchTable'
+                        tdiv <- sSearchTableDiv
+                        appendJQuery table tdiv
+                        let rfs = reverse fs
                         nrow <- foldr (tablesert nr) 
                                       (select "<tr></tr>") 
                                       rfs
                         srow <- foldr (tablesert sr) 
                                       (select "<tr></tr>") 
-                                      rfs
-                        t <- sSearchTable 
-                        appendJQuery nrow t
-                        appendJQuery srow t
+                                      rfs 
+                        appendJQuery nrow table
+                        appendJQuery srow table
                         return ()
 
 tablesert :: (Field -> IO JQuery) -> Field -> IO JQuery -> IO JQuery
