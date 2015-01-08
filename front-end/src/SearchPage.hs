@@ -9,11 +9,13 @@ import Crubadan.Shared.Types
 
 {- ** FRONT-END CONFIGURATION ** 
    
-   domain : the target url for back-end requests
+   cgiURL : the target url for back-end cgi requests
+   
+   wsURL : the directory for landing-page urls
 
-   fields : the list of fields (in order) which are
-            to be displayed for the user in the
-            search table
+   mkFields : the list of fields (in order) which are
+              to be displayed for the user in the
+              search table
    -}
 
 cgiURL url = url ++ "/cgi/" -- extension for cgi queries
@@ -33,13 +35,14 @@ mkFields :: String -> [Field]
 mkFields domain = 
   
   [ ( "Name (English)", "name_english", (withLink (wsURL u) ".html") )
-  , ( "ISO Code", "lang", plain ) 
-  , ( "Country", "country", plain ) ]
-  
+  , ( "ISO Code",       "lang",         plain                        ) 
+  , ( "Country",        "country",      plain                        )
+  ]
+
   where u = reqURL domain
 
-
 {- ** END OF FRONT-END CONFIGURATION ** -}
+
 
 reqURL domain = "http://" ++ domain
 
