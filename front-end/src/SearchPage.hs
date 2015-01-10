@@ -1,3 +1,4 @@
+import Control.Applicative
 import Reactive.Banana
 import Reactive.Banana.Frameworks
 
@@ -41,6 +42,8 @@ mkFields domain =
 
   where u = reqURL domain
 
+resultsPerPage = 50 :: Int
+
 {- ** END OF FRONT-END CONFIGURATION ** -}
 
 
@@ -50,26 +53,107 @@ main = do domain <- cgiDomain
           putStrLn domain
           let fields = mkFields domain 
           initSearchTable fields
-          (addHandler, fire) <- newAddHandler
-          attachHandler fields fire
-          network <- compile (mkNetwork domain addHandler)
-          
+          (s,p,n,r) <- getAddHandlers
+          attachHandlers fields (fire s, fire p, fire n)
+          network <- compile (mkNetwork domain 
+                                        (fire r)
+                                        ( addHandler s
+                                        , addHandler p
+                                        , addHandler n
+                                        , addHandler r))
+
           -- Fill the table from empty query when page first loads
           initQuery <- readSearchTable fields
-          upd8 domain initQuery
-          
+          handleRq domain (fire r) (0, resultsPerPage, initQuery)
+
           -- then start listening for key-ups to update
           actuate network
 
-mkNetwork domain handler = 
-  do eQueries <- fromAddHandler handler 
-     reactimate (fmap (upd8 domain) eQueries)
+getAddHandlers = do searchTable <- newAddHandler
+                    prevButton <- newAddHandler
+                    nextButton <- newAddHandler
+                    responses <- newAddHandler
+                    return ( searchTable
+                           , prevButton
+                           , nextButton
+                           , responses)
 
-upd8 :: String -> Query -> IO ()
-upd8 domain q = handleQ domain q >>= showResults (mkFields domain)
+addHandler = fst
+fire       = snd
 
-handleQ :: String -> Query -> IO (Maybe [Result])
-handleQ domain q = print q >> netget (cgiURL (reqURL domain)) q
+mkNetwork domain sneaky (s,p,n,r) = 
+  do eQueries <- fromAddHandler s
+     ePrevious <- fromAddHandler p
+     eNext <- fromAddHandler n
+     eResponses <- fromAddHandler r 
+     
+     let --ePages :: Event t Int
+         ePages = countPages <$> eResponses
 
-showResults :: [Field] -> Maybe [Result] -> IO ()
-showResults fields rs = print rs >> writeResults fields rs
+         --bPages :: Behavior t Int
+         bPages = stepper 1 ePages
+         countPages (Just r) = ((responseTotal r) 
+                                `div` resultsPerPage) + 1
+         countPages _ = 1
+         --bRangeLim :: Behavior t ((Int -> Int) -> (Int -> Int))
+         bRangeLim = (\a f -> 
+                        mayDo f (\x -> 
+                                   (x >= 1) && (x <= a))) 
+                     <$> bPages
+
+         --eQU :: Event t (Int -> Int)
+         --eQU = eQueries <$ setOne
+         eQU = fmap (\_ -> setOne) eQueries
+         --ePU :: Event t (Int -> Int)
+         --ePU = ePrevious <$ minusOne
+         ePU = fmap (\_ -> minusOne) ePrevious
+         --eNU :: Event t (Int -> Int)
+         --eNU = eNext <$ plusOne
+         eNU = fmap (\_ -> plusOne) eNext
+
+         --eUpdaters :: Event t (Int -> Int)
+         eUpdaters = eQU `union` ePU `union` eNU
+
+         --bCurrentPage :: Behavior t Int
+         bCurrentPage = accumB 1 (bRangeLim <@> eUpdaters)
+
+         bReqIndex = fmap (\p -> resultsPerPage * (p - 1)) bCurrentPage
+         bReqNum = pure resultsPerPage
+         bReqQuery = stepper [] eQueries
+         bRequest = (\a b c -> (a,b,c)) 
+                    <$> bReqIndex 
+                    <*> bReqNum 
+                    <*> bReqQuery
+
+         sendRq = handleRq domain sneaky
+     
+     cRq <- changes bRequest
+     reactimate' (fmap sendRq <$> (cRq))
+
+     -- eRequests (this will come from the controls behavior) 
+     -- reactimate (fmap (upd8 domain) eRequests)
+     
+     reactimate (fmap (showResults (mkFields domain)) eResponses)
+
+
+setOne :: Int -> Int
+setOne _ = 1
+minusOne :: Int -> Int
+minusOne a = a - 1
+plusOne :: Int -> Int
+plusOne a = a + 1
+
+mayDo :: (a -> a) -> (a -> Bool) -> (a -> a)
+mayDo fun test x = if test (fun x)
+                      then fun x
+                      else x
+
+--upd8 :: String -> Request -> IO ()
+--upd8 domain rq = handleRq domain rq >>= showResults (mkFields domain)
+
+handleRq :: String -> Handler (Maybe Response) -> Request -> IO ()
+handleRq domain fire rq = 
+  print rq >> netget (cgiURL (reqURL domain)) rq >>= fire
+
+showResults :: [Field] -> Maybe Response -> IO ()
+showResults fields r = print r >> writeResponse fields r

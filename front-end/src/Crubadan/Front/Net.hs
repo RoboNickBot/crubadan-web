@@ -17,7 +17,7 @@ url = T.pack "http://localhost/cgi/"   --"http://octalsrc.net/cgi/"
 
 query q = [(T.pack "query", T.pack (show q))]
 
-netget :: String -> CS.Query -> IO (Maybe [CS.Result])
+netget :: String -> CS.Request -> IO (Maybe CS.Response)
 netget url r = 
   do ar <- ajax (T.pack url) (query r) def
      return . fmap (fromJust . read . T.unpack) . arData $ ar
