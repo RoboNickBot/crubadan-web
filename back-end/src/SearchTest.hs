@@ -1,6 +1,6 @@
 import Options.Applicative
 
-import Crubadan.Search (genResults)
+import Crubadan.Search (genResponse)
 import Crubadan.FileIO (readDatabase)
 import qualified Crubadan.Types as C
 import qualified Crubadan.Shared.Types as CS
@@ -24,7 +24,7 @@ main = do ops <- execParser (info (helper <*> getOps)
                                   <> progDesc "Search for SEARCH"
                                   <> header "web-back-test - it's a test...")) 
           db <- readDatabase (dbpath ops)
-          print (genResults [("name_english", queryStr ops)] db)
+          print (genResponse (0,50,[("name_english", queryStr ops)]) db)
           putStrLn ""
           putStrLn "-- Full Database --"
           putStrLn ""

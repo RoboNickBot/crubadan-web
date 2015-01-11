@@ -7,9 +7,10 @@ import qualified Crubadan.Types as C
 import qualified Crubadan.FileIO as F
 
 cgiMain :: C.Database -> CGI CGIResult
-cgiMain d = do setHeader "Content-type" "text/plain"
-               query <- readInput "query"
-               output $ show $ fmap (take 20) $ S.genResults <$> query <*> (pure d)
+cgiMain d = 
+  do setHeader "Content-type" "text/plain"
+     request <- readInput "query"
+     output $ show $ S.genResponse <$> request <*> (pure d)
 
 main :: IO ()
 main = do d <- F.readDatabase "./crubadan-key-values"

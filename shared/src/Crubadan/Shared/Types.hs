@@ -30,6 +30,6 @@ type Response = (Int, Int, Int, [Result])
 
 responseIndex (i,_,_,_) = i
 responseNum (_,_,_,rs) = length rs
-responseTotal (_,t,_,_) = t
+responseTotal (_,t,_,_) = t -- the total number of results
 responseData (_,_,_,rs) = rs 
-responseAll (_,_,a,_) = a
+responseAll (_,_,a,_) = a -- the total number of database entries

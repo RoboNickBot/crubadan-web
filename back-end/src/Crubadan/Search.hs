@@ -1,18 +1,34 @@
-module Crubadan.Search ( genResults ) where
+module Crubadan.Search ( genResponse ) where
 
 import Text.Regex(Regex, mkRegex, matchRegex)
 import Data.Maybe(isJust)
 import qualified Data.Map as M
-
+import Data.Char (toLower)
 import qualified Crubadan.Types as C
 import qualified Crubadan.Shared.Types as CS
+
+genResponse :: CS.Request -> C.Database -> CS.Response
+genResponse r d = let results = genResults (CS.requestData r) d
+                      index = CS.requestIndex r
+                      trim = cull (index) (CS.requestNum r)
+                      dsize = length d
+                      rsize = length results
+                  in (index, rsize, dsize, trim results)
+
+cull :: Int -> Int -> [a] -> [a]
+cull 0 s ls = take s ls
+cull i s (_:ls) = cull (i - 1) s ls
+cull _ _ _ = []
 
 genResults :: CS.Query -> C.Database -> [CS.Result]
 genResults q = let trans (key,val) = ( key, (mayRegex val) )
                in crunch q . filter (matches (fmap trans q)) 
 
+fixQ s = let n = fmap toLower s
+         in "^" ++ n
+
 mayRegex "" = Nothing
-mayRegex s = Just (mkRegex s)
+mayRegex s = Just (mkRegex (fixQ s))
 
 matches :: [(String, Maybe Regex)] -> C.WS -> Bool
 matches r ws = (and . fmap isJust . fmap (matchAttr ws)) r
@@ -20,7 +36,7 @@ matches r ws = (and . fmap isJust . fmap (matchAttr ws)) r
 matchAttr :: C.WS -> (String, Maybe Regex) -> Maybe [String]
 matchAttr ws (s, Nothing) = Just ["pass"]
 matchAttr ws (s,(Just r)) = 
-  M.lookup s (C.wsData ws) >>= matchRegex r . C.wsaMatch
+  M.lookup s (C.wsData ws) >>= matchRegex r . fmap toLower . C.wsaMatch
 
 crunch :: CS.Query -> [C.WS] -> [CS.Result]
 crunch q = foldr (\w -> (:) (C.wsUID w, pullVals q w)) []

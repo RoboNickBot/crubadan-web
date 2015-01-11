@@ -50,7 +50,8 @@ sIndexInfo' :: (Int, Int, Int, Int) -> IO JQuery
 sIndexInfo' (start, end, num, total) = 
   selp ("<span id=\"" ++ indexInfoName ++ "\">Showing "
         ++ show start ++ " to " ++ show end 
-        ++ " of " ++ show num ++ totalClause )
+        ++ " of " ++ show num ++ totalClause
+        ++ "</span>")
   where totalClause = if num == total
                          then " entries"
                          else " results (filtered from "
@@ -60,7 +61,8 @@ sIndexInfo' (start, end, num, total) =
 selp = select . pack
 
 initSearchTable :: [Field] -> IO ()
-initSearchTable fs = do table <- sSearchTable'
+initSearchTable fs = do initControls
+                        table <- sSearchTable'
                         tdiv <- sSearchTableDiv
                         appendJQuery table tdiv
                         let rfs = reverse fs
