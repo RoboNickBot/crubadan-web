@@ -13,6 +13,6 @@ cgiMain d =
      output $ show $ S.genResponse <$> request <*> (pure d)
 
 main :: IO ()
-main = do d <- F.readDatabase "./crubadan-key-values"
+main = do d <- F.readDatabase "/data/crubadan/key-values"
           runFastCGI $ cgiMain d
           --(print . show . S.genResults "a") d

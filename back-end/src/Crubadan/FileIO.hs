@@ -10,7 +10,10 @@ import qualified Crubadan.Types as C
 recordFilename = "EOLAS"
 
 readDatabase :: String -> IO C.Database
-readDatabase = fmap processEntries . entries
+readDatabase = fmap (sortEntries . processEntries) . entries
+
+sortEntries :: C.Database -> C.Database
+sortEntries = L.sortBy (\a b -> compare (C.engName a) (C.engName b))
 
 entries :: String -> IO [String]
 --entries path = getNames path >>= foldr entryAppend (return [])

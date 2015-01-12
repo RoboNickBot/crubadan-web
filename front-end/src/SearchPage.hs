@@ -17,6 +17,13 @@ import Crubadan.Shared.Types
    mkFields : the list of fields (in order) which are
               to be displayed for the user in the
               search table
+   
+   resultsPerPage : the number of results that show at
+                    one time on-screen (this might be
+                    something that the user should be
+                    able to change, but it doesn't seem
+                    worth it to make that work at the
+                    moment..
    -}
 
 cgiURL url = url ++ "/cgi/" -- extension for cgi queries
@@ -26,8 +33,9 @@ wsURL url = url ++ "/ws/" -- extension for links to landing-pages
      
      face : the label the column has in the search table
      
-     key : the database key the column corresponds to
-     
+     key : the key from the EOLAS files that the column 
+           corresponds to
+
      display : the function used to display field values
                (plain unless the value needs to be a
                 click-able link in the table or something)
@@ -42,7 +50,7 @@ mkFields domain =
 
   where u = reqURL domain
 
-resultsPerPage = 50 :: Int
+resultsPerPage = 20 :: Int
 
 {- ** END OF FRONT-END CONFIGURATION ** -}
 
@@ -62,12 +70,13 @@ main = do domain <- cgiDomain
                                         , addHandler n
                                         , addHandler r))
 
-          -- Fill the table from empty query when page first loads
+
+          -- start listening for key-ups and responses to update
+          actuate network
+          
+          -- then spawn an empty query to fill the table to start
           initQuery <- readSearchTable fields
           handleRq domain (fire r) (0, resultsPerPage, initQuery)
-
-          -- then start listening for key-ups to update
-          actuate network
 
 getAddHandlers = do searchTable <- newAddHandler
                     prevButton <- newAddHandler
@@ -87,39 +96,27 @@ mkNetwork domain sneaky (s,p,n,r) =
      eNext <- fromAddHandler n
      eResponses <- fromAddHandler r 
      
-     let --ePages :: Event t Int
-         ePages = countPages <$> eResponses
-
-         --bPages :: Behavior t Int
+     let ePages = countPages <$> eResponses
+         
          bPages = stepper 1 ePages
          countPages (Just r) = ((responseTotal r) 
                                 `div` resultsPerPage) + 1
          countPages _ = 1
-         --bRangeLim :: Behavior t ((Int -> Int) -> (Int -> Int))
          bRangeLim = (\a f -> 
                         mayDo f (\x -> 
                                    (x >= 1) && (x <= a))) 
                      <$> bPages
 
-         --eQU :: Event t (Int -> Int)
-         --eQU = eQueries <$ setOne
-         eQU = fmap (\_ -> setOne) eQueries
-         --ePU :: Event t (Int -> Int)
-         --ePU = ePrevious <$ minusOne
-         ePU = fmap (\_ -> minusOne) ePrevious
-         --eNU :: Event t (Int -> Int)
-         --eNU = eNext <$ plusOne
+         eQU = fmap (\_ -> setOne) eQueries 
+         ePU = fmap (\_ -> minusOne) ePrevious 
          eNU = fmap (\_ -> plusOne) eNext
-
-         --eUpdaters :: Event t (Int -> Int)
-         eUpdaters = eQU `union` ePU `union` eNU
-
-         --bCurrentPage :: Behavior t Int
+         
+         eUpdaters = eQU `union` ePU `union` eNU 
          bCurrentPage = accumB 1 (bRangeLim <@> eUpdaters)
 
          bReqIndex = fmap (\p -> resultsPerPage * (p - 1)) bCurrentPage
          bReqNum = pure resultsPerPage
-         bReqQuery = stepper [] eQueries
+         bReqQuery = stepper (emptyQ (mkFields domain)) eQueries
          bRequest = (\a b c -> (a,b,c)) 
                     <$> bReqIndex 
                     <*> bReqNum 
@@ -128,13 +125,13 @@ mkNetwork domain sneaky (s,p,n,r) =
          sendRq = handleRq domain sneaky
      
      cRq <- changes bRequest
+     -- \/ react on changes to the search request that would be sent
      reactimate' (fmap sendRq <$> (cRq))
-
-     -- eRequests (this will come from the controls behavior) 
-     -- reactimate (fmap (upd8 domain) eRequests)
-     
+     -- \/ react on new responses recieved
      reactimate (fmap (showResults (mkFields domain)) eResponses)
 
+emptyQ :: [Field] -> Query
+emptyQ = foldr (\f qs -> (fieldKey f, ""):qs) []
 
 setOne :: Int -> Int
 setOne _ = 1

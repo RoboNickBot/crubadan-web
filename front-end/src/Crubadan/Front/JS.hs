@@ -44,6 +44,7 @@ sSearchTableDiv = selp ("#" ++ searchTableID ++ "div")
 sSearchBox field = selp ("#sb" ++ (fieldKey field)) 
 
 sIndexInfoDiv = selp ("#" ++ indexInfoName ++ "div")
+sIndexInfoDiv' = selp ("<div id =\"" ++ indexInfoName ++ "div\"></div>")
 
 sIndexInfo = selp ("#" ++ indexInfoName)
 sIndexInfo' :: (Int, Int, Int, Int) -> IO JQuery 
@@ -79,9 +80,11 @@ initSearchTable fs = do initControls
 initControls :: IO ()
 initControls = do d <- sSearchConDiv
                   info <- sIndexInfo' (0,0,0,0)
+                  infodiv <- sIndexInfoDiv'
                   pb <- sPrevButton'
                   nb <- sNextButton'
-                  appendJQuery info d
+                  appendJQuery infodiv d
+                  appendJQuery info infodiv
                   appendJQuery pb d
                   appendJQuery nb d
                   return ()
@@ -143,7 +146,7 @@ writeResponse fs (Just r) =
      newinfo <- sIndexInfo' ds
      par <- sIndexInfoDiv
      appendJQuery newinfo par
-     writeResults fs (Just (responseData r))
+     writeResults fs (Just (reverse (responseData r)))
 writeResponse fs Nothing = 
   sIndexInfo >>= remove >> writeResults fs Nothing 
 
