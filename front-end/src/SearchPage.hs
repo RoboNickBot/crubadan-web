@@ -44,7 +44,8 @@ mkFields :: String -> [Field]
 mkFields domain = 
   
   [ ( "Name (English)", "name_english", (withLink (wsURL u) ".html") )
-  , ( "ISO Code",       "lang",         plain                        ) 
+  , ( "BCP-47 Code",    "lang",         plain                        ) 
+  , ( "ISO 639-3 Code", "ISO_639-3",    plain                        ) 
   , ( "Country",        "country",      plain                        )
   ]
 
