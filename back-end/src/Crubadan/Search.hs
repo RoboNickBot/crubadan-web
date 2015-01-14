@@ -24,6 +24,13 @@ genResults :: CS.Query -> C.Database -> [CS.Result]
 genResults q = let trans (key,val) = ( key, (mayRegex val) )
                in crunch q . filter (matches (fmap trans q)) 
 
+
+{- This adding-a-space is so that the first word of the field becomes
+   a space-started word just like the rest, so that the match can be
+   made uniformly over strings starting with a space. it doesn't appear
+   in the visible results in any way
+   
+   kind of a hack, but it works? -}
 fixQ s = let n = fmap toLower s
          in " " ++ n
 
@@ -35,8 +42,8 @@ matches r ws = (and . fmap isJust . fmap (matchAttr ws)) r
 
 matchAttr :: C.WS -> (String, Maybe Regex) -> Maybe [String]
 matchAttr ws (s, Nothing) = Just ["pass"]
-matchAttr ws (s,(Just r)) = 
-  M.lookup s (C.wsData ws) >>= matchRegex r . fmap ((" " ++) . toLower) . C.wsaMatch
+matchAttr ws (s,(Just r)) = -- space added here \/ linked with comment above
+  M.lookup s (C.wsData ws) >>= matchRegex r . (" " ++) . fmap toLower . C.wsaMatch
 
 crunch :: CS.Query -> [C.WS] -> [CS.Result]
 crunch q = foldr (\w -> (:) (C.wsUID w, pullVals q w)) []
