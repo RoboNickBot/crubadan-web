@@ -23,7 +23,7 @@ main = do ops <- execParser (info (helper <*> getOps)
                                    ( fullDesc
                                   <> progDesc "Search for SEARCH"
                                   <> header "web-back-test - it's a test...")) 
-          db <- readDatabase (dbpath ops)
+          db <- readDatabase ["name_english", "lang"] (dbpath ops)
           print (genResponse (0,50,[("name_english", queryStr ops)]) db)
           putStrLn ""
           putStrLn "-- Full Database --"

@@ -9,8 +9,8 @@ import qualified Crubadan.Types as C
 
 recordFilename = "EOLAS"
 
-readDatabase :: String -> IO C.Database
-readDatabase = fmap (sortEntries . processEntries) . entries
+readDatabase :: [String] -> String -> IO C.Database
+readDatabase keys = fmap (sortEntries . processEntries keys) . entries
 
 sortEntries :: C.Database -> C.Database
 sortEntries = L.sortBy (\a b -> compare (C.engName a) (C.engName b))
@@ -37,29 +37,31 @@ entryAppend name ss =
      others <- ss
      return (content : others)
 
-processEntries :: [String] -> C.Database
-processEntries = foldr p []
-  where p f ss = case P.parse wsFile "(unknown)" f of
+processEntries :: [String] -> [String] -> C.Database
+processEntries keys = foldr p []
+  where p f ss = case P.parse (wsFile keys) "(unknown)" f of
                    Left _ -> ss
                    Right w -> w : ss
 
-wsFile :: P.GenParser Char st C.WS
-wsFile = 
+wsFile :: [String] -> P.GenParser Char st C.WS
+wsFile ks = 
   do name <- wsName
      P.char '\n'
-     rs <- wsRecords 
+     rs <- wsRecords ks
      return (C.WS name 
                   (M.fromList (("lang", C.Attribute name name) : rs)))
 
 wsName = P.string "lang " >> P.many (P.noneOf "\n")
 
-wsRecords = do record <- wsRecord
-               more <- moreRecords
-               return ( record : more )
+wsRecords ks = do record <- wsRecord
+                  more <- moreRecords ks
+                  return (if (elem (fst record) ks)
+                             then record : more 
+                             else more)
 
 wsRecord = do key <- P.many (P.noneOf " ")
               P.char ' '
               val <- P.many (P.noneOf "\n")
               return ( key, C.Attribute val val )
 
-moreRecords = P.char '\n' >> ((P.eof >> return []) P.<|> wsRecords)
+moreRecords ks = P.char '\n' >> ((P.eof >> return []) P.<|> wsRecords ks)
