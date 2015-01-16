@@ -116,16 +116,36 @@ div.info h2 {
   margin-bottom: 0.4em;
 }
 
-a:link {
+.navbar a {
+    text-decoration: none;
+}
+
+.navbar a:link {
+    color: inherit;
+}
+
+.navbar a:visited {
+    color: inherit;
+}
+
+.navbar a:hover {
+    color: #FFFF4D;
+}
+
+.navbar a:active {
+    color: #FFFF4D;
+}
+
+div.paper a:link {
   color: #333333;
 }
-a:visited {
+div.paper a:visited {
   color: #333333;
 }
-a:hover {
+div.paper a:hover {
   color: red;
 }
-a:active {
+div.paper a:active {
   color: red;
 }
 
