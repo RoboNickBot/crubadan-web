@@ -67,10 +67,10 @@ initSearchTable fs = do initControls
                         tdiv <- sSearchTableDiv
                         appendJQuery table tdiv
                         let rfs = reverse fs
-                        nrow <- foldr (tablesert nr) 
+                        nrow <- foldr (tablesert (nr fs)) 
                                       (selp "<tr></tr>") 
                                       rfs
-                        srow <- foldr (tablesert sr) 
+                        srow <- foldr (tablesert (sr fs)) 
                                       (selp "<tr></tr>") 
                                       rfs 
                         appendJQuery nrow table
@@ -82,11 +82,12 @@ initControls = do d <- sSearchConDiv
                   info <- sIndexInfo' (0,0,0,0)
                   infodiv <- sIndexInfoDiv'
                   pb <- sPrevButton'
-                  nb <- sNextButton'
-                  appendJQuery infodiv d
-                  appendJQuery info infodiv
+                  nb <- sNextButton' 
+                  
                   appendJQuery pb d
                   appendJQuery nb d
+                  appendJQuery infodiv d
+                  appendJQuery info infodiv
                   return ()
 
 tablesert :: (Field -> IO JQuery) -> Field -> IO JQuery -> IO JQuery
@@ -94,15 +95,17 @@ tablesert fun field iojq = do child <- fun field
                               parent <- iojq
                               appendJQuery child parent
 
-nr :: Field -> IO JQuery
-nr f = selp ("<td>" ++ fieldTitle f ++ "</td>")
+nr :: [Field] -> Field -> IO JQuery
+nr fs f = selp ("<th style=\"width: "
+                ++ show (100 `div` (length fs))
+                ++ "%\">" ++ fieldTitle f ++ "</th>")
 
-sr :: Field -> IO JQuery
-sr f = selp ("<td><input id=\"sb" 
-             ++ (fieldKey f)
-             ++ "\" type=\"text\" name=\""
-             ++ (fieldTitle f)
-             ++ "\" /></td>")
+sr :: [Field] -> Field -> IO JQuery
+sr fs f = selp ("<td><input id=\"sb" 
+                ++ (fieldKey f)
+                ++ "\" type=\"search\" name=\""
+                ++ (fieldTitle f)
+                ++ "\" placeholder=\"Search...\" /></td>")
 
 attachHandlers :: [Field] 
                -> ( Handler Query
