@@ -1,0 +1,10 @@
+BINDIR = bin
+INSTALLLOC = $(DESTDIR)
+
+all: build
+
+build:
+	echo "Nothing to do..."
+
+install:
+	cp $(BINDIR)/* $(INSTALLLOC)/$(BINDIR)/
