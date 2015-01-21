@@ -1,5 +1,5 @@
 BINDIR = bin
-INSTALLLOC = $(DESTDIR)
+INSTALLLOC = $(DESTDIR)/usr
 
 all: build
 
