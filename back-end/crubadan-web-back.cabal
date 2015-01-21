@@ -12,7 +12,7 @@ build-type:          Simple
 -- extra-source-files:  
 cabal-version:       >=1.10
 
-executable crback
+executable crback-fcgi
   main-is:             SearchFCGI.hs
   other-modules:       Crubadan.Search
   -- other-extensions:    
