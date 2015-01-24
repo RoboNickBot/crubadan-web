@@ -1,54 +1,46 @@
-# Won't be useful if you aren't Nick...
-
-DISTNAME= crubadan-web
-BACKENDNAME= crubadan-web-back
-DISTFILE= $(DISTNAME).tgz
-INSTALLPATH= /srv/www/crubadan/
+DISTNAME= crubadan-web-front
+VERSION= 0.1
+DISTDIR= $(DISTNAME)-$(VERSION)
+DISTFILE= $(DISTDIR).tar.gz
 WEBDIR= www
-BINDIR= bin
+JSNAME= writing_systems.js
 
-all: local
+JQUERY= GHCJS-JQuery
+JQUERYLINK= https://github.com/GHCJS/$(JQUERY).git
 
-akira: package
-	scp $(DISTFILE) akira:
-	ssh akira "tar xzf $(DISTFILE); rm $(DISTFILE); cp $(WEBDIR)/* $(INSTALLPATH); rm -r $(WEBDIR); cp $(BINDIR)/* ./; rm -r $(BINDIR)"
+all: package
 
-local: build
-	cp $(WEBDIR)/* $(INSTALLPATH)
 
-package: build
-	tar czf $(DISTFILE) $(WEBDIR) $(BINDIR)/
+package: build dist_dir
+	cp ../README.md $(DISTDIR)/
+	cp ../LICENSE $(DISTDIR)/
+	tar czf $(DISTFILE) $(DISTDIR)
 
-build: frontend backend web_dir bin_dir
-	cp static/* $(WEBDIR)/
-	cp .cabal-sandbox/bin/$(DISTNAME).jsexe/all.js $(WEBDIR)/
-	cp .cabal-sandbox/bin/$(BACKENDNAME) $(BINDIR)/
+build: sandbox shared_js jquery web_dir
+	cabal install --ghcjs
+	rm -r ./dist
+	cp .cabal-sandbox/bin/$(DISTNAME).jsexe/all.js $(DISTDIR)/$(WEBDIR)/$(JSNAME)
+	cp static/* $(DISTDIR)/$(WEBDIR)/
 
-frontend: sandbox shared_js
-	cabal install --ghcjs ../ghcjs-zone/GHCJS-JQuery
-	cabal install --ghcjs ./front-end
-	rm -r ./front-end/dist
 
-backend: sandbox shared
-	cabal install ./back-end
-	rm -r ./back-end/dist
-
-shared: sandbox
-	cabal install ./shared
-	rm -r ./shared/dist
+jquery: sandbox
+	git clone $(JQUERYLINK)
+	cabal install --ghcjs ./$(JQUERY)
+	rm -r $(JQUERY)/dist
 
 shared_js: sandbox
-	cabal install --ghcjs ./shared
-	rm -r ./shared/dist
+	rm -r ../shared/dist; exit 0;
+	cabal install --ghcjs ../shared
+	rm -r ../shared/dist
 
-web_dir: clean
-	mkdir $(WEBDIR)
+web_dir: clean dist_dir
+	mkdir $(DISTDIR)/$(WEBDIR)
 
-bin_dir: clean
-	mkdir $(BINDIR)
+dist_dir: clean
+	mkdir $(DISTDIR)
 
 sandbox: clean
 	cabal sandbox init
 
 clean:
-	rm -r $(WEBDIR); rm -r $(BINDIR); rm $(DISTFILE); rm -r .cabal-sandbox; rm cabal.sandbox.config; exit 0;
+	rm -r $(WEBDIR); rm -r $(DISTDIR); rm $(DISTFILE); rm -rf $(JQUERY); rm -r .cabal-sandbox; rm cabal.sandbox.config; exit 0;
