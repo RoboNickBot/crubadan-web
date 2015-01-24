@@ -1,6 +1,0 @@
-#!/bin/sh
-
-PORT="8992"
-EXEC=/usr/bin/crback-fcgi
-
-spawn-fcgi -a 127.0.0.1 -p $PORT -f $EXEC || echo "Try running $EXEC and looking for error messages?"
