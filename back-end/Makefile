@@ -14,7 +14,6 @@ package: pack
 
 pack: build dist_dir
 	cp -r $(BINDIR) $(DISTDIR)/
-	cp $(OTHERMAKE) $(DISTDIR)/Makefile
 	cp ../README.md $(DISTDIR)/
 	cp ../LICENSE   $(DISTDIR)/
 	cp $(INITNAME)  $(DISTDIR)/$(EXECNAME)
