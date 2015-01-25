@@ -25,9 +25,9 @@ If not using the init-script, place ```crbackend``` and
 ```PATH```, and then run ```crbackend```.  If it succeeds, you will be
 given the PID on which the FCGI process is running.
 
-*Please note that if ```/data/crubadan``` does not exist or is not
- readable by the user controlling the FCGI process, the process will
- fail to start!*
+**Please note that if ```/data/crubadan``` does not exist or is not
+  readable by the user controlling the FCGI process, the process will
+  fail to start!**
 
 It is also important to note that the back-end service must be
 restarted whenever the EOLAS files it reads are updated or added to.
