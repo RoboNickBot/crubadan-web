@@ -23,6 +23,7 @@ DAEMON=/usr/bin/$NAME
 PIDFILE=/var/run/$NAME.pid
 #DAEMON_ARGS= " -n "
 SCRIPTNAME=/etc/init.d/$NAME
+DUSER=$NAME
 
 # Exit if the package is not installed
 [ -x "$DAEMON" ] || exit 0
@@ -49,10 +50,12 @@ do_start()
 	#   2 if daemon could not be started
     start-stop-daemon --start --quiet \
 		      --pidfile $PIDFILE \
+		      --chuid ${DUSER}:${DUSER}
 		      --exec $DAEMON --test > /dev/null \
 	|| return 1
     start-stop-daemon --start --quiet \
 		      --pidfile $PIDFILE \
+		      --chuid ${DUSER}:${DUSER}		      
 		      --exec $DAEMON -- \
 		      $DAEMON_ARGS \
 	|| return 2

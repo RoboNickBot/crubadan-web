@@ -1,5 +1,5 @@
 DISTNAME= crubadan-web-back
-VERSION=  0.1.3
+VERSION=  0.1.4
 EXECNAME= crbackend
 FCGINAME= $(EXECNAME)-fcgi_
 INITNAME= $(EXECNAME).init
