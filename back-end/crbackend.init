@@ -20,7 +20,8 @@ DESC="Backend FCGI process for Crubadan queries"
 NAME=crbackend
 FCGINAME=${NAME}-fcgi_
 DAEMON=/usr/bin/$NAME
-PIDFILE=/var/run/$NAME.pid
+PIDDIR=/var/run/$NAME
+PIDFILE=$PIDDIR/$NAME.pid
 #DAEMON_ARGS= " -n "
 SCRIPTNAME=/etc/init.d/$NAME
 DUSER=$NAME
@@ -44,18 +45,23 @@ DUSER=$NAME
 #
 do_start()
 {
+    if [ ! -d $PIDDIR ]; then
+	mkdir $PIDDIR
+	chown ${DUSER}:${DUSER} $PIDDIR
+    fi
+    
 	# Return
 	#   0 if daemon has been started
 	#   1 if daemon was already running
 	#   2 if daemon could not be started
     start-stop-daemon --start --quiet \
 		      --pidfile $PIDFILE \
-		      --chuid ${DUSER}:${DUSER}
+		      --chuid ${DUSER}:${DUSER} \
 		      --exec $DAEMON --test > /dev/null \
 	|| return 1
     start-stop-daemon --start --quiet \
 		      --pidfile $PIDFILE \
-		      --chuid ${DUSER}:${DUSER}		      
+		      --chuid ${DUSER}:${DUSER} \
 		      --exec $DAEMON -- \
 		      $DAEMON_ARGS \
 	|| return 2
