@@ -1,5 +1,5 @@
 DISTNAME= crubadan-web-front
-VERSION= 0.1.1
+VERSION= 0.1.1.1
 DISTDIR= $(DISTNAME)-$(VERSION)
 DISTFILE= $(DISTDIR).tar.gz
 WEBDIR= www

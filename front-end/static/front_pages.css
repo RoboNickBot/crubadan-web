@@ -32,7 +32,7 @@ h1 span {
   color: #FFFF4D;
 }
 
-div.content p {
+div.content p, ul {
   text-align: justify;
   position: relative;
   margin: 0.8em;
@@ -44,28 +44,36 @@ div.content p {
   color: black;
 }
 
+div.content ul{
+  padding: unset;
+  padding-top: 0.1em;
+  padding-left: 0.8em;
+  padding-bottom: 0.7em;
+}
+
 div.content li {
-  background-color: #F2F2F2;
+  /*background-color: #F2F2F2;*/
   border-radius: 3px;
   color: black;
   margin: 0.4em;
+  margin-left: 1em;
   margin-right: 3em;
   padding: 0.4em;
-  padding-bottom: 0.2em;
-  padding-top: 0.2em;
+  padding-bottom: 0.1em;
+  padding-top: 0.1em;
   text-align: justify;
 }
 
-.content p a:link {
+div.content a:link {
   color: blue;
 }
-.content p a:visited {
+div.content a:visited {
   color: purple;
 }
 
-.content p a:hover {
+div.content a:hover {
   color: red;
 }
-.content p a:active {
+div.content a:active {
   color: red;
 }
