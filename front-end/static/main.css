@@ -49,7 +49,7 @@ ul.navbar>li {
 
 ul.navbar>li:first-child {
   color: #FFFF4D;
-  font-style: italic;
+  /*font-style: italic;*/
 }
 
 div.mainlist {
