@@ -1,0 +1,70 @@
+body {
+  font-family: sans-serif;
+}
+
+h1 {
+  background-color: #1F3D99;
+  color: white;
+  border: 2px solid #0C183D;
+  padding: 5px;
+  text-align: center;
+}
+
+h2 {
+  padding: 0.1em;
+  padding-left: 0.2em;
+  font-style: italic;
+  margin-bottom: 0em;
+  border-width: 1px;
+  background-color: #F8F8F8;
+  
+  border-right-color: #1F3D99;
+  border-right-style: solid;
+  border-right-width: 0.3em;
+  border-top-color: #1F3D99;
+  border-top-style: solid;
+  border-top-width: 0.3em;
+}
+
+h1 span {
+  font-style: italic;
+  color: #FFFF4D;
+}
+
+div.content p {
+  text-align: justify;
+  position: relative;
+  margin: 0.8em;
+  margin-top: 0.6em;
+  margin-bottom: 1em;
+  padding: 0.6em;
+  background-color: #F8F8F8;
+  border-radius: 3px;
+  color: black;
+}
+
+div.content li {
+  background-color: #F2F2F2;
+  border-radius: 3px;
+  color: black;
+  margin: 0.4em;
+  margin-right: 3em;
+  padding: 0.4em;
+  padding-bottom: 0.2em;
+  padding-top: 0.2em;
+  text-align: justify;
+}
+
+.content p a:link {
+  color: blue;
+}
+.content p a:visited {
+  color: purple;
+}
+
+.content p a:hover {
+  color: red;
+}
+.content p a:active {
+  color: red;
+}
