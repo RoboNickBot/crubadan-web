@@ -32,7 +32,7 @@ h1 span {
   color: #FFFF4D;
 }
 
-div.content p, ul {
+div.content>p, div.content>ul, div.content>div.divp {
   text-align: justify;
   position: relative;
   margin: 0.8em;
@@ -44,11 +44,25 @@ div.content p, ul {
   color: black;
 }
 
-div.content ul{
+div.content>ul{
   padding: unset;
   padding-top: 0.1em;
   padding-left: 0.8em;
   padding-bottom: 0.7em;
+}
+
+div.divp {
+  padding-top: 0em;
+}
+
+div.divp>p{
+  margin-top: 0em;
+}
+
+div.divp>ul{
+  margin-left: 0em;
+  padding-left: 0.4em;
+  margin-bottom: 0em;
 }
 
 div.content li {
