@@ -6,8 +6,11 @@ body {
 }
 
 div.paper {
-  margin-left: 4em;
-  width: 37em;
+  /*margin-left: 4em;*/
+  /*width: 37em;*/
+  margin-left: 3%;
+  width: 94%;
+  max-width: 47em;
   background-color: #C2D1FF;
   padding: 0em;
 }
@@ -17,14 +20,10 @@ div.content {
   padding-top: 0.1em;
   padding-bottom: 0.3em;
   padding-left: 2em;
-  padding-right: 1em;
+  padding-right: 2em;
 }
 
-div.content h1 {
-  font-size: 1.35em;
-  margin-top: 1em;
-  margin-bottom: 1em;
-}
+
 
 div.info {
   font-size: 0.8em;
@@ -32,8 +31,9 @@ div.info {
 
 ul.navbar {
   background-color: #1F3D99;
+  border-bottom: 0px solid #0C183D;
   color: white;
-  padding-left: 0.4em;
+  padding-left: 0.6em;
   padding-top: 0.2em;
   padding-bottom: 0.2em;
   margin: 0;
@@ -49,6 +49,7 @@ ul.navbar>li {
 
 ul.navbar>li:first-child {
   color: #FFFF4D;
+  /*font-style: italic;*/
 }
 
 div.mainlist {
@@ -163,3 +164,11 @@ span.resource a:active {
   color: red;
 }
 
+hr {
+  margin-top: 2em;
+  margin-bottom: 2em;
+  border-style: solid;
+  background-color: #1F3D99;
+  color: #0C183D;
+  border-width: 2px;
+}
