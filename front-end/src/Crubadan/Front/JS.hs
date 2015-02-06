@@ -1,4 +1,4 @@
-{-# LANGUAGE CPP, ForeignFunctionInterface #-}
+{-# LANGUAGE CPP, ForeignFunctionInterface, JavaScriptFFI #-}
 
 module Crubadan.Front.JS ( initSearchTable
                          , attachHandlers -- TODO
@@ -9,6 +9,7 @@ import JavaScript.JQuery
 import Data.Default (def)
 import Data.Text (pack, unpack)
 import Control.Event.Handler (Handler)
+import Control.Concurrent (threadDelay)
 
 import Crubadan.Front.Types
 import Crubadan.Shared.Types
@@ -119,15 +120,24 @@ attachHandlers fields (s,p,n) = foldr (watchBox s fields)
                                 >> sNextButton >>= watchButton n
 
 watchButton :: Handler () -> JQuery -> IO ()
-watchButton fire button = let h _ = return () >>= fire
-                          in click h def button >> return ()
+watchButton fire button = 
+  let h _ = return () >>= fire
+  in do checkWait button
+        click h def button
+        return ()
 
 watchBox :: Handler Query -> [Field] -> Field -> IO () -> IO ()
 watchBox fire fs field io = 
   io >> do let handler _ = fire =<< readSearchTable fs
            box <- sSearchBox field
+           checkWait box
            keyup handler def box
            return ()
+                  
+checkWait jq = do b <- ffiDoesExist jq
+                  if b
+                     then return ()
+                     else threadDelay 100 >> checkWait jq
 
 readSearchTable :: [Field] -> IO Query
 readSearchTable = foldr quappend (return [])
@@ -179,3 +189,6 @@ colsert row r (f, d) io =
            td <- selp ("<td>" ++ disp r d ++ "</td>")
            appendJQuery td row
            return ()
+
+foreign import javascript safe "$r = $1.length"
+   ffiDoesExist :: JQuery -> IO Bool
