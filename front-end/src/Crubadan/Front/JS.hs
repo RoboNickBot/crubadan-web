@@ -3,7 +3,8 @@
 module Crubadan.Front.JS ( initSearchTable
                          , attachHandlers -- TODO
                          , readSearchTable
-                         , writeResponse ) where
+                         , writeResponse
+                         , testBs ) where
 
 import JavaScript.JQuery
 import Data.Default (def)
@@ -63,9 +64,13 @@ sIndexInfo' (start, end, num, total) =
 selp = select . pack
 
 initSearchTable :: [Field] -> IO ()
-initSearchTable fs = do initControls
+initSearchTable fs = do putStrLn "init-ing controls..."
+                        initControls
+                        putStrLn "quick test:"
+                        testBs
                         table <- sSearchTable'
                         tdiv <- sSearchTableDiv
+                        putStrLn "adding table..."
                         appendJQuery table tdiv
                         let rfs = reverse fs
                         nrow <- foldr (tablesert (nr fs)) 
@@ -85,11 +90,37 @@ initControls = do d <- sSearchConDiv
                   pb <- sPrevButton'
                   nb <- sNextButton' 
                   
-                  appendJQuery pb d
-                  appendJQuery nb d
-                  appendJQuery infodiv d
-                  appendJQuery info infodiv
+                  --appendJQuery pb d
+                  appendLoop pb d "prevButton" sPrevButton
+                  --appendJQuery nb d
+                  appendLoop nb d "nextButton" sNextButton
+                  --appendJQuery infodiv d
+                  appendLoop infodiv d "infodiv" sIndexInfoDiv
+                  --appendJQuery info infodiv
+                  appendLoop info infodiv "info" sIndexInfo
+                  putStrLn "quicker test:"
+                  testBs
                   return ()
+
+appendLoop child parent str f = 
+  do appendJQuery child parent
+     boo <- f >>= ffiDoesExist
+     if boo
+        then do putStrLn (str ++ " successfully appended!")
+                threadDelay 1000
+                return ()
+        else do putStrLn ("Appending " ++ str ++ " failed. Trying again...")
+                threadDelay 10000
+                appendLoop child parent str f
+
+testBs = do pb <- sPrevButton >>= ffiDoesExist
+            nb <- sNextButton >>= ffiDoesExist
+            if pb
+               then putStrLn "prevButton exists"
+               else putStrLn "prevButton doesn't exist!"
+            if nb
+               then putStrLn "nextButton exists"
+               else putStrLn "nextButton doesn't exist!"
 
 tablesert :: (Field -> IO JQuery) -> Field -> IO JQuery -> IO JQuery
 tablesert fun field iojq = do child <- fun field
@@ -122,7 +153,7 @@ attachHandlers fields (s,p,n) = foldr (watchBox s fields)
 watchButton :: Handler () -> JQuery -> IO ()
 watchButton fire button = 
   let h _ = return () >>= fire
-  in do checkWait button
+  in do checkWait button "button"
         click h def button
         return ()
 
@@ -130,14 +161,19 @@ watchBox :: Handler Query -> [Field] -> Field -> IO () -> IO ()
 watchBox fire fs field io = 
   io >> do let handler _ = fire =<< readSearchTable fs
            box <- sSearchBox field
-           checkWait box
+           checkWait box "box"
            keyup handler def box
            return ()
                   
-checkWait jq = do b <- ffiDoesExist jq
-                  if b
-                     then return ()
-                     else threadDelay 100 >> checkWait jq
+checkWait jq tp = 
+  do b <- ffiDoesExist jq
+     if b
+        then return ()
+        else do putStrLn "something didn't exist" 
+                putStrLn ("a " ++ tp ++ ", in fact...")
+                putStrLn "waiting 10s..." 
+                threadDelay 10000
+                checkWait jq tp
 
 readSearchTable :: [Field] -> IO Query
 readSearchTable = foldr quappend (return [])

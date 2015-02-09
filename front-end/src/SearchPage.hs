@@ -61,8 +61,10 @@ reqURL domain = "http://" ++ domain
 main = do domain <- cgiDomain
           putStrLn domain
           let fields = mkFields domain 
+          testBs
           initSearchTable fields
           (s,p,n,r) <- getAddHandlers
+          testBs
           attachHandlers fields (fire s, fire p, fire n)
           network <- compile (mkNetwork domain 
                                         (fire r)
@@ -78,6 +80,7 @@ main = do domain <- cgiDomain
           -- then spawn an empty query to fill the table to start
           initQuery <- readSearchTable fields
           handleRq domain (fire r) (0, resultsPerPage, initQuery)
+          testBs
 
 getAddHandlers = do searchTable <- newAddHandler
                     prevButton <- newAddHandler
