@@ -90,27 +90,32 @@ initControls = do d <- sSearchConDiv
                   pb <- sPrevButton'
                   nb <- sNextButton' 
                   
-                  --appendJQuery pb d
-                  appendLoop pb d "prevButton" sPrevButton
-                  --appendJQuery nb d
-                  appendLoop nb d "nextButton" sNextButton
-                  --appendJQuery infodiv d
-                  appendLoop infodiv d "infodiv" sIndexInfoDiv
-                  --appendJQuery info infodiv
-                  appendLoop info infodiv "info" sIndexInfo
+                  appendOrReload pb d "prevButton" sPrevButton 
+                  appendOrReload nb d "nextButton" sNextButton 
+                  appendOrReload infodiv d "infodiv" sIndexInfoDiv 
+                  appendOrReload info infodiv "info" sIndexInfo
                   putStrLn "quicker test:"
                   testBs
                   return ()
+
+appendOrReload child parent str f =
+  do appendJQuery child parent
+     boo <- f >>= ffiDoesExist
+     if boo
+        then do putStrLn (str ++ " successfully appended!")
+                return ()
+        else do putStrLn (str ++ " failed to append! Reloading...")
+                ffiReloadPage
 
 appendLoop child parent str f = 
   do appendJQuery child parent
      boo <- f >>= ffiDoesExist
      if boo
         then do putStrLn (str ++ " successfully appended!")
-                threadDelay 1000
+                threadDelay 10000
                 return ()
         else do putStrLn ("Appending " ++ str ++ " failed. Trying again...")
-                threadDelay 10000
+                threadDelay 10000000
                 appendLoop child parent str f
 
 testBs = do pb <- sPrevButton >>= ffiDoesExist
@@ -226,5 +231,8 @@ colsert row r (f, d) io =
            appendJQuery td row
            return ()
 
-foreign import javascript safe "$r = $1.length"
+foreign import javascript safe "$r = $1.length;"
    ffiDoesExist :: JQuery -> IO Bool
+
+foreign import javascript safe "location.reload();"
+   ffiReloadPage :: IO ()
