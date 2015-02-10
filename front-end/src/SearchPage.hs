@@ -61,17 +61,15 @@ reqURL domain = "http://" ++ domain
 main = do domain <- cgiDomain
           putStrLn domain
           let fields = mkFields domain 
-          testBs
           initSearchTable fields
-          (s,p,n,r) <- getAddHandlers
-          testBs
+          (s,p,n,r) <- getAddHandlers 
           attachHandlers fields (fire s, fire p, fire n)
           network <- compile (mkNetwork domain 
                                         (fire r)
                                         ( addHandler s
                                         , addHandler p
                                         , addHandler n
-                                        , addHandler r))
+                                        , addHandler r ))
 
 
           -- start listening for key-ups and responses to update
@@ -79,8 +77,7 @@ main = do domain <- cgiDomain
           
           -- then spawn an empty query to fill the table to start
           initQuery <- readSearchTable fields
-          handleRq domain (fire r) (0, resultsPerPage, initQuery)
-          testBs
+          handleRq domain (fire r) (0, resultsPerPage, initQuery) 
 
 getAddHandlers = do searchTable <- newAddHandler
                     prevButton <- newAddHandler
@@ -89,7 +86,7 @@ getAddHandlers = do searchTable <- newAddHandler
                     return ( searchTable
                            , prevButton
                            , nextButton
-                           , responses)
+                           , responses )
 
 addHandler = fst
 fire       = snd
@@ -148,9 +145,6 @@ mayDo :: (a -> a) -> (a -> Bool) -> (a -> a)
 mayDo fun test x = if test (fun x)
                       then fun x
                       else x
-
---upd8 :: String -> Request -> IO ()
---upd8 domain rq = handleRq domain rq >>= showResults (mkFields domain)
 
 handleRq :: String -> Handler (Maybe Response) -> Request -> IO ()
 handleRq domain fire rq = 

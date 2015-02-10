@@ -3,8 +3,7 @@
 module Crubadan.Front.JS ( initSearchTable
                          , attachHandlers -- TODO
                          , readSearchTable
-                         , writeResponse
-                         , testBs ) where
+                         , writeResponse ) where
 
 import JavaScript.JQuery
 import Data.Default (def)
@@ -65,9 +64,7 @@ selp = select . pack
 
 initSearchTable :: [Field] -> IO ()
 initSearchTable fs = do putStrLn "init-ing controls..."
-                        initControls
-                        putStrLn "quick test:"
-                        testBs
+                        initControls 
                         table <- sSearchTable'
                         tdiv <- sSearchTableDiv
                         putStrLn "adding table..."
@@ -94,10 +91,21 @@ initControls = do d <- sSearchConDiv
                   appendOrReload nb d "nextButton" sNextButton 
                   appendOrReload infodiv d "infodiv" sIndexInfoDiv 
                   appendOrReload info infodiv "info" sIndexInfo
-                  putStrLn "quicker test:"
-                  testBs
                   return ()
 
+
+{- This function is necessary because of some weird behavior
+   in Chrome and Chromium.  Sometimes, when the page is navigated
+   to, appendJQuery calls don't work, and continue to not work
+   after waiting several seconds.
+   
+   This happens maybe one in 10 times the page is navigated to.
+   
+   Refreshing the page never causes the issue, only navigating to
+   the page by link or with the forward and back buttons.
+   
+   In any case, if the page is reloaded (even from cache), the
+   problem goes away.  So this is a solution. -}
 appendOrReload child parent str f =
   do appendJQuery child parent
      boo <- f >>= ffiDoesExist
@@ -106,26 +114,6 @@ appendOrReload child parent str f =
                 return ()
         else do putStrLn (str ++ " failed to append! Reloading...")
                 ffiReloadPage
-
-appendLoop child parent str f = 
-  do appendJQuery child parent
-     boo <- f >>= ffiDoesExist
-     if boo
-        then do putStrLn (str ++ " successfully appended!")
-                threadDelay 10000
-                return ()
-        else do putStrLn ("Appending " ++ str ++ " failed. Trying again...")
-                threadDelay 10000000
-                appendLoop child parent str f
-
-testBs = do pb <- sPrevButton >>= ffiDoesExist
-            nb <- sNextButton >>= ffiDoesExist
-            if pb
-               then putStrLn "prevButton exists"
-               else putStrLn "prevButton doesn't exist!"
-            if nb
-               then putStrLn "nextButton exists"
-               else putStrLn "nextButton doesn't exist!"
 
 tablesert :: (Field -> IO JQuery) -> Field -> IO JQuery -> IO JQuery
 tablesert fun field iojq = do child <- fun field
@@ -158,27 +146,15 @@ attachHandlers fields (s,p,n) = foldr (watchBox s fields)
 watchButton :: Handler () -> JQuery -> IO ()
 watchButton fire button = 
   let h _ = return () >>= fire
-  in do checkWait button "button"
-        click h def button
+  in do click h def button
         return ()
 
 watchBox :: Handler Query -> [Field] -> Field -> IO () -> IO ()
 watchBox fire fs field io = 
   io >> do let handler _ = fire =<< readSearchTable fs
-           box <- sSearchBox field
-           checkWait box "box"
+           box <- sSearchBox field 
            keyup handler def box
            return ()
-                  
-checkWait jq tp = 
-  do b <- ffiDoesExist jq
-     if b
-        then return ()
-        else do putStrLn "something didn't exist" 
-                putStrLn ("a " ++ tp ++ ", in fact...")
-                putStrLn "waiting 10s..." 
-                threadDelay 10000
-                checkWait jq tp
 
 readSearchTable :: [Field] -> IO Query
 readSearchTable = foldr quappend (return [])
