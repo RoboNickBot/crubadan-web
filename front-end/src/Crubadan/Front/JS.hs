@@ -194,11 +194,12 @@ writeResults fs (Just rs) = do clearError
                                table <- sSearchTable
                                foldr (rowsert table fs) (return ()) rs 
 writeResults _ _ = 
-  do clearTable
+  do clearError
+     clearTable
      writeError "Connection or Database Error!  Try again later?"
 
 writeError s = do d <- sErrorDiv
-                  e <- selp ("<span>" ++ s ++ "</span>")
+                  e <- selp ("<div><span>" ++ s ++ "</span></div>")
                   appendJQuery e d
                   return ()
 

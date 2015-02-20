@@ -173,7 +173,7 @@ hr {
   border-width: 2px;
 }
 
-div.loading, div.error {
+div.loading, div.error>div {
     background-color: white;
     margin-left: 30%;
     margin-right: 30%;
@@ -192,6 +192,6 @@ div.loading img {
     margin-right: 0.3em;
 }
 
-div.error {
+div.error>div {
     color: red;
 }
