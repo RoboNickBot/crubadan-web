@@ -15,7 +15,7 @@ package: pack
 pack: build dist_dir
 	cp -r $(BINDIR) $(DISTDIR)/
 	cp ../README.md $(DISTDIR)/
-	cp ../LICENSE   $(DISTDIR)/
+	cp  ./LICENSE   $(DISTDIR)/
 	cp $(INITNAME)  $(DISTDIR)/$(EXECNAME)
 
 dist_dir: clean

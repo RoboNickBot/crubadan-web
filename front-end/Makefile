@@ -18,7 +18,7 @@ prep: jquery shared_js
 
 package: build dist_dir
 	cp ../README.md $(DISTDIR)/
-	cp ../LICENSE $(DISTDIR)/
+	cp  ./LICENSE $(DISTDIR)/
 	tar czf $(DISTFILE) $(DISTDIR)
 
 build: res_dir
