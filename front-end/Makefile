@@ -1,11 +1,15 @@
-DISTNAME= crubadan-web-front
-VERSION= 0.1.1.3
-DISTDIR= $(DISTNAME)-$(VERSION)
-DISTFILE= $(DISTDIR).tar.gz
-WEBDIR= www
-JSNAME= writing_systems.js
+DISTNAME=   crubadan-web-front
+VERSION=    0.1.2.0
+DISTDIR=    $(DISTNAME)-$(VERSION)
+DISTFILE=   $(DISTDIR).tar.gz
+RESDIR=     res
+STYLEDIR=   style
+IMGDIR=     img
+JSNAME=     writing_systems.js
 
-JQUERY= GHCJS-JQuery
+BUILTPATH=  .cabal-sandbox/bin/$(DISTNAME).jsexe
+
+JQUERY=     GHCJS-JQuery
 JQUERYLINK= https://github.com/GHCJS/$(JQUERY).git
 
 all: package
@@ -17,12 +21,15 @@ package: build dist_dir
 	cp ../LICENSE $(DISTDIR)/
 	tar czf $(DISTFILE) $(DISTDIR)
 
-build: web_dir
+build: res_dir
 	cabal install --ghcjs
 	rm -r ./dist
-	cp .cabal-sandbox/bin/$(DISTNAME).jsexe/all.js $(DISTDIR)/$(WEBDIR)/$(JSNAME)
-	cp static/* $(DISTDIR)/$(WEBDIR)/
-
+	cp $(BUILTPATH)/out.js     $(DISTDIR)/$(RESDIR)/$(JSNAME)
+	cp $(BUILTPATH)/lib.js     $(DISTDIR)/$(RESDIR)/
+	cp $(BUILTPATH)/rts.js     $(DISTDIR)/$(RESDIR)/
+	cp $(BUILTPATH)/runmain.js $(DISTDIR)/$(RESDIR)/
+	cp $(STYLEDIR)/*.css       $(DISTDIR)/$(RESDIR)/
+	cp $(IMGDIR)/*             $(DISTDIR)/$(RESDIR)/
 
 jquery: sandbox
 	git clone $(JQUERYLINK)
@@ -34,8 +41,8 @@ shared_js: sandbox
 	cabal install --ghcjs ../shared
 	rm -r ../shared/dist; exit 0;
 
-web_dir: clean dist_dir
-	mkdir $(DISTDIR)/$(WEBDIR)
+res_dir: clean dist_dir
+	mkdir $(DISTDIR)/$(RESDIR)
 
 dist_dir: clean
 	mkdir $(DISTDIR)
@@ -44,7 +51,7 @@ sandbox: fullclean
 	cabal sandbox init
 
 clean:
-	rm -r $(WEBDIR); rm -r $(DISTDIR); rm $(DISTFILE); exit 0;
+	rm -r $(DISTDIR)/$(RESDIR); rm -r $(DISTDIR); rm $(DISTFILE); exit 0;
 
 fullclean: clean
 	rm -rf $(JQUERY); rm -r .cabal-sandbox; rm cabal.sandbox.config; exit 0;

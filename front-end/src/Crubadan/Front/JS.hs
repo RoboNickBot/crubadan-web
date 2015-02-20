@@ -1,6 +1,7 @@
 {-# LANGUAGE CPP, ForeignFunctionInterface, JavaScriptFFI #-}
 
 module Crubadan.Front.JS ( initSearchTable
+                         , cullLoadingDiv
                          , attachHandlers -- TODO
                          , readSearchTable
                          , writeResponse ) where
@@ -22,6 +23,9 @@ prevButtonName = "prevbutton" :: String
 prevButtonLabel = "<- Previous"
 nextButtonName = "nextbutton" :: String
 nextButtonLabel = "Next ->"
+loadingDivID = "loadingdiv"
+
+sLoadingDiv = selp ("#" ++ loadingDivID)
 
 sPrevButton = selp ("#" ++ prevButtonName)
 sNextButton = selp ("#" ++ nextButtonName)
@@ -61,6 +65,8 @@ sIndexInfo' (start, end, num, total) =
                               ++ " total entries)"
 
 selp = select . pack
+
+cullLoadingDiv = sLoadingDiv >>= remove >> return ()
 
 initSearchTable :: [Field] -> IO ()
 initSearchTable fs = do putStrLn "init-ing controls..."

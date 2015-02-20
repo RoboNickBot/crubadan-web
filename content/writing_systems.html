@@ -3,10 +3,9 @@
   <head>
     <title>Downloads</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <link rel="stylesheet" href="/main.css"/>
-    <link rel="stylesheet" href="/front_pages.css"/>
-    <link rel="stylesheet" href="/writing_systems.css"/>
-    <script language="javascript" src="/writing_systems.js"></script>
+    <link rel="stylesheet" href="/res/main.css"/>
+    <link rel="stylesheet" href="/res/front_pages.css"/>
+    <link rel="stylesheet" href="/res/writing_systems.css"/>
   </head>
 
   <body>
@@ -25,6 +24,12 @@
       <div class="content">
         <h1>Writing Systems</h1>
 
+	<!-- Will be culled as soon as the javascript executes -->
+	<div id="loadingdiv" class="loading">
+	  <img src="/res/busy.gif"></img>
+	  <span>Fetching Data...</span>
+	</div>
+
 	<div id="searchcontrolsdiv"></div>
 
         <div id="searchtablediv"></div>
@@ -33,4 +38,12 @@
     </div>
 
   </body>
+
+  <!-- This should make all the heavy javascript download last.. -->
+  <script language="javascript" src="/res/rts.js"></script>
+  <script language="javascript" src="/res/lib.js"></script>
+  <script language="javascript" src="/res/writing_systems.js"></script>
+
+  <script language="javascript" src="/res/runmain.js" defer></script>
+  
 </html>

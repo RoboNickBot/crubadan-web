@@ -60,8 +60,11 @@ reqURL domain = "http://" ++ domain
 
 main = do domain <- cgiDomain
           putStrLn domain
-          let fields = mkFields domain 
+          let fields = mkFields domain
+          
+          cullLoadingDiv
           initSearchTable fields
+          
           (s,p,n,r) <- getAddHandlers 
           attachHandlers fields (fire s, fire p, fire n)
           network <- compile (mkNetwork domain 
