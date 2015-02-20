@@ -36,13 +36,15 @@ restarted whenever the EOLAS files it reads are updated or added to.
 ## Front-end usage and installation
 
 (If installing from a ```.deb``` package under 'releases', everything
-is done for you except for your webserver configuration.)
+is done for you except for your webserver configuration.  Note that
+the package also **does not** install the HTML found in the /content/
+directory)
 
 Building this requires [GHCJS](https://github.com/GHCJS/GHCJS.git) and
 its accompanying patched cabal-install in your ```PATH```.
 
 Upon successfully running the ```make``` command, simply put the
-contents of the ```www``` directory somewhere and configure a
+contents of the ```res``` directory somewhere and configure a
 webserver to serve them.  You will also need to make your webserver
 proxy requests for ```/cgi/``` to FCGI processes listening on port
 8892.
