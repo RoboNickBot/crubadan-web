@@ -173,7 +173,7 @@ hr {
   border-width: 2px;
 }
 
-div.loading {
+div.loading, div.error {
     background-color: white;
     margin-left: 30%;
     margin-right: 30%;
@@ -188,6 +188,10 @@ div.loading {
     font-size: 1.2em;
 }
 
-div.loading span {
-    margin-left: 0.3em;
+div.loading img {
+    margin-right: 0.3em;
+}
+
+div.error {
+    color: red;
 }

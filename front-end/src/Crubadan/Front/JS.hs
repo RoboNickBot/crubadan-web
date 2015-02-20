@@ -15,6 +15,7 @@ import Control.Concurrent (threadDelay)
 import Crubadan.Front.Types
 import Crubadan.Shared.Types
 
+errorDivID = "errordiv"
 searchConID = "searchcontrols" :: String
 searchTableID = "searchtable" :: String
 resultRowClass = "resultrow" :: String
@@ -25,6 +26,7 @@ nextButtonName = "nextbutton" :: String
 nextButtonLabel = "Next ->"
 loadingDivID = "loadingdiv"
 
+sErrorDiv = selp ("#" ++ errorDivID)
 sLoadingDiv = selp ("#" ++ loadingDivID)
 
 sPrevButton = selp ("#" ++ prevButtonName)
@@ -187,10 +189,20 @@ writeResponse fs Nothing =
   sIndexInfo >>= remove >> writeResults fs Nothing 
 
 writeResults :: [Field] -> Maybe [Result] -> IO ()
-writeResults fs (Just rs) = do clearTable
+writeResults fs (Just rs) = do clearError
+                               clearTable
                                table <- sSearchTable
                                foldr (rowsert table fs) (return ()) rs 
-writeResults _ _ = putStrLn "Connection or Database Error!"
+writeResults _ _ = 
+  do clearTable
+     writeError "Connection or Database Error!  Try again later?"
+
+writeError s = do d <- sErrorDiv
+                  e <- selp ("<span>" ++ s ++ "</span>")
+                  appendJQuery e d
+                  return ()
+
+clearError = sErrorDiv >>= children >>= remove >> return ()
 
 clearTable :: IO ()
 clearTable = sResultRows >>= remove >> return ()
